@@ -8,6 +8,11 @@ void Register();
 
 int checkUserExists(char* cartCNI);
 
+void welcomeApp();
+
+int countryList();
+
+
 int main()
 {
     int appRunning = 1;
@@ -19,7 +24,7 @@ int main()
         scanf("%d", &appChoice);
         switch(appChoice){
             case 1:
-                login();
+                welcomeApp();
                 break;
             case 2:
                 Register();
@@ -42,6 +47,8 @@ void login(){
         printf("error, user is not regesterd\n");
         return;
     }
+
+
 }
 
 void Register(){
@@ -88,4 +95,37 @@ int checkUserExists(char* cartCNI){
     }
     fclose(file);
     return 0;
+}
+
+void welcomeApp(){
+    int countryChoice;
+    countryChoice = countryList();
+    switch(countryChoice){
+        //morocco:
+        case 1:
+            printf("Morocco\n");
+            break;
+            //Spain:
+        case 2:
+            printf("Spain\n");
+            break;
+            //France:
+        case 3:
+            printf("France\n");
+            break;
+
+    }
+
+
+}
+
+int countryList(){
+    int choice;
+    do{
+    printf("1-Morroco\n");
+    printf("2-Spain\n");
+    printf("3-France\n");
+    scanf("%d", &choice);
+    }while(choice!=1 || choice!=2 || choice!=3);
+    return choice;
 }
