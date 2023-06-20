@@ -7,12 +7,12 @@ typedef struct Date{
     int firstDay;
     int lastDay;
 }Date;
+
 typedef struct Hotel{
     int id;
     char hotelName[100];
     int price;
 }Hotel;
-
 
 typedef struct Order{
     char cartCNI[30];
@@ -37,7 +37,11 @@ void morocco(char* cartCNI);
 
 void readHotelData(FILE* data, Hotel* hotelList, int* size);
 
+void showOrders(char* cartCNI);
+
 Date setDays();
+
+void showOrderInfo(Order order);
 
 int main()
 {
@@ -166,6 +170,7 @@ int countryList(){
 
 
 void morocco(char* cartCNI){
+    up:
     system("cls");
     Order order;
     strcpy(order.cartCNI, cartCNI);
@@ -206,10 +211,28 @@ void morocco(char* cartCNI){
     system("cls");
     order.date = setDays();
     system("cls");
+    showOrderInfo(order);
+    int confirm;
+    do{
+        printf("1-Accept\n2-edit\n3-cancle\n");
+        scanf("%d", &confirm);
+        system("cls");
+    }while(confirm<1 || confirm>3);
+    switch(confirm){
+        case 1:
+            break;
+        case 2:
+            goto up;
+            break;
+        case 3:
+            return;
+            break;
+    }
     printf("add more Orders\n 1-yes 2-no \n");
     do{
         scanf("%d", &YESNO);
     }while(YESNO<1 || YESNO>2);
+    int days = order.date.lastDay-order.date.firstDay;
     switch(YESNO){
         case 2:{
             char userFileWithExt[200];
@@ -219,10 +242,10 @@ void morocco(char* cartCNI){
             FILE* userFile = fopen(userFileWithExt, "a");
             if(userFile==NULL){
                 userFile = fopen(userFileWithExt, "w");
-                fprintf(userFile, "%s %s %s from %d to %d persons:%d price: %d $\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons);
+                fprintf(userFile, "%s %s %s from %d to %d persons:%d price: %d $\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons*days);
                 break;
             }
-            fprintf(userFile, "%s %s %s from %d to %d persons:%d price: %d $\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons);
+            fprintf(userFile, "%s %s %s from %d to %d persons:%d price: %d $\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons*days);
             break;
             }
         case 1:{
@@ -233,10 +256,11 @@ void morocco(char* cartCNI){
             FILE* userFile = fopen(userFileWithExt, "a");
             if(userFile==NULL){
                 userFile = fopen(userFileWithExt, "w");
-                fprintf(userFile, "%s %s %s from %d to %d persons:%d price: %d$\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons);
+                fprintf(userFile, "%s %s %s from %d to %d persons:%d price: %d$\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons*days);
                 break;
             }
-            fprintf(userFile, "%s %s %s from %d to %d persons:%d price: %d$\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons);
+
+            fprintf(userFile, "%s %s %s from %d to %d persons:%d price: %d$\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons*days);
             welcomeApp(cartCNI);
             break;
             }
@@ -302,4 +326,21 @@ Date setDays(){
         scanf("%d", &date.lastDay);
     }while(date.firstDay>date.lastDay);
     return date;
+}
+
+void showOrderInfo(Order order){
+    printf("Country: %s\n", order.country);
+    printf("City: %s\n", order.city);
+    printf("Hotel: %s\n", order.hotel.hotelName);
+    printf("Days: %d from %d to %d\n", order.date.lastDay-order.date.firstDay, order.date.firstDay, order.date.lastDay);
+    printf("Person: %d\n", order.persons);
+    int days = order.date.lastDay-order.date.firstDay;
+    printf("price: %d$\n", order.hotel.price*order.persons*days);
+}
+
+void showOrders(char* cartCNI){
+    char userFileWithExt[200];
+    strcpy(userFileWithExt, "userOrders/");
+    strcat(userFileWithExt, ".txt");
+    FILE* userFile = fopen(userFileWithExt, "r");
 }
