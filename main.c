@@ -45,6 +45,7 @@ int main()
     int appChoice;
 
     while(appRunning){
+        system("cls");
         printf("1-Login\n");
         printf("2-Register\n");
         printf("3-Stop App\n");
@@ -61,23 +62,28 @@ int main()
                 break;
             default:
                 printf("Error in choice\n");
+                getch();
+                break;
         }
     }
     return 0;
 }
 
 void login(){
+    system("cls");
     char cartCNI[30];
     printf("Cart CNI: ");
     scanf("%s", cartCNI);
     if(!checkUserExists(cartCNI)){
         printf("error, user is not regesterd\n");
+        getch();
         return;
     }
     welcomeApp(cartCNI);
 }
 
 void Register(){
+    system("cls");
     char cartCNI[30];
     char phoneNumber[30];
     printf("Cart CNI: ");
@@ -93,10 +99,14 @@ void Register(){
         char line[200];
         if(checkUserExists(cartCNI)){
             printf("error, this User Already Regestered\n");
+            getch();
             return;
         }
         fprintf(usersFile, "%s %s\n", cartCNI, phoneNumber);
         fclose(usersFile);
+        system("cls");
+        printf("User Regestered Sussecful\n");
+        getch();
     }
 }
 
@@ -123,6 +133,7 @@ int checkUserExists(char* cartCNI){
 }
 
 void welcomeApp(char* cartCNI){
+    system("cls");
     int countryChoice;
     countryChoice = countryList();
     switch(countryChoice){
@@ -155,6 +166,7 @@ int countryList(){
 
 
 void morocco(char* cartCNI){
+    system("cls");
     Order order;
     strcpy(order.cartCNI, cartCNI);
     int YESNO;
@@ -162,6 +174,7 @@ void morocco(char* cartCNI){
     char city[100];
     strcpy(order.country, "Morocco");
     Hotel hotelList[1000];
+    system("cls");
     printf("1-Kenitra\n");
     scanf("%d", &cityChoice);
     switch(cityChoice){
@@ -177,19 +190,26 @@ void morocco(char* cartCNI){
     FILE* cityFile = fopen(cityWithExt, "r");
     if(cityFile == NULL){
         printf("city Is not Available Right Now\n");
+        getch();
         return;
     }
     int size;
+    system("cls");
     readHotelData(cityFile, hotelList,&size);
     do{
         scanf("%d", &hotelChoice);
     }while(hotelChoice<1 || hotelChoice>=size);
     order.hotel = hotelList[hotelChoice-1];
+    system("cls");
     printf("Persons: ");
     scanf("%d", &order.persons);
+    system("cls");
     order.date = setDays();
+    system("cls");
     printf("add more Orders\n 1-yes 2-no \n");
-    scanf("%d", &YESNO);
+    do{
+        scanf("%d", &YESNO);
+    }while(YESNO<1 || YESNO>2);
     switch(YESNO){
         case 2:{
             char userFileWithExt[200];
@@ -213,15 +233,16 @@ void morocco(char* cartCNI){
             FILE* userFile = fopen(userFileWithExt, "a");
             if(userFile==NULL){
                 userFile = fopen(userFileWithExt, "w");
-                fprintf(userFile, "%s %s %s from %d to %d persons:%d price: %d $\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons);
+                fprintf(userFile, "%s %s %s from %d to %d persons:%d price: %d$\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons);
                 break;
             }
-            fprintf(userFile, "%s %s %s from %d to %d persons:%d price: %d $\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons);
+            fprintf(userFile, "%s %s %s from %d to %d persons:%d price: %d$\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons);
             welcomeApp(cartCNI);
             break;
             }
         default:
             printf("error in choice");
+            getch();
             break;
     }
 }
@@ -250,8 +271,10 @@ void readHotelData(FILE* data,Hotel* hotelList, int* size){
             }
             if(j==2){
                 int size = strlen(token);
-                token[size-1] = '\0';
-                hotelList[i-2].price = atoi(token);
+                char price[10];
+                strcpy(price, token);
+                price[size-1] = '\0';
+                hotelList[i-2].price = atoi(price);
             }
             j++;
             printf("|");
