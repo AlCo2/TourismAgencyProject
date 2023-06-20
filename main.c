@@ -3,6 +3,7 @@
 
 int main()
 {
+    printf("Hamaza and abdou project");
     printf("Hello world!\n");
     return 0;
 }
