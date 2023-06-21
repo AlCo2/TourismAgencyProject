@@ -181,10 +181,22 @@ void morocco(char* cartCNI){
     Hotel hotelList[1000];
     system("cls");
     printf("1-Kenitra\n");
+    printf("2-tanger\n");
+    printf("3-marrakech\n");
+    printf("4-agadir\n");
     scanf("%d", &cityChoice);
     switch(cityChoice){
         case 1:
             strcpy(city, "kenitra");
+            break;
+        case 2:
+            strcpy(city, "tanger");
+            break;
+        case 3:
+            strcpy(city, "marrakech");
+            break;
+        case 4:
+            strcpy(city, "agadir");
             break;
     }
     strcpy(order.city, city);
@@ -202,6 +214,7 @@ void morocco(char* cartCNI){
     system("cls");
     readHotelData(cityFile, hotelList,&size);
     do{
+        printf("Hotel Number: ");
         scanf("%d", &hotelChoice);
     }while(hotelChoice<1 || hotelChoice>=size);
     order.hotel = hotelList[hotelChoice-1];
@@ -211,9 +224,10 @@ void morocco(char* cartCNI){
     system("cls");
     order.date = setDays();
     system("cls");
-    showOrderInfo(order);
+
     int confirm;
     do{
+        showOrderInfo(order);
         printf("1-Accept\n2-edit\n3-cancle\n");
         scanf("%d", &confirm);
         system("cls");
@@ -278,11 +292,12 @@ void readHotelData(FILE* data,Hotel* hotelList, int* size){
     char line[200];
     while(fgets(line, sizeof(line), data)){
         token = strtok(line, ",");
-
         if(i==0){
+            printf(" ");
+        printf("____________________________________________________________________________________________________________\n");
             i++;
         }else{
-            printf("_______________________\n");
+            printf("-------------------------------------------------------------------------------------------------\n");
             hotelList[i-1].id = i;
             printf("%d", i);
 
@@ -302,12 +317,11 @@ void readHotelData(FILE* data,Hotel* hotelList, int* size){
             }
             j++;
             printf("|");
-            printf("%-14s ", token);
-            printf("|");
+            printf("%-14s", token);
             token = strtok(NULL, ",");
         }
-        printf("_______________________\n");
     }
+    printf("____________________________________________________________________________________________________________\n");
     *size = i;
 }
 
@@ -324,7 +338,7 @@ Date setDays(){
     do{
         printf("lastDay: ");
         scanf("%d", &date.lastDay);
-    }while(date.firstDay>date.lastDay);
+    }while(date.firstDay>date.lastDay || date.lastDay==date.firstDay);
     return date;
 }
 
