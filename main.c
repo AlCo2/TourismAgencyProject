@@ -53,33 +53,12 @@ void showOrders(char* userFileExt);
 
 void showUserOrder(Order order);
 
+void APP();
+
 int main()
 {
     checkFoldersOfApp();
-    int appRunning = 1;
-    int appChoice;
-    while(appRunning){
-        system("cls");
-        printf("1-Login\n");
-        printf("2-Register\n");
-        printf("3-Stop App\n");
-        scanf("%d", &appChoice);
-        switch(appChoice){
-            case 1:
-                login();
-                break;
-            case 2:
-                Register();
-                break;
-            case 3:
-                appRunning = 0;
-                break;
-            default:
-                printf("Error in choice\n");
-                getch();
-                break;
-        }
-    }
+    APP();
     return 0;
 }
 
@@ -640,6 +619,7 @@ void userHaveOrder(char* cartCNI){
             getch();
         }
     }
+    APP();
 }
 
 void showOrders(char* userFileExt){
@@ -683,3 +663,30 @@ void showOrders(char* userFileExt){
     }
     fclose(userFile);
 }
+
+void APP(){
+    int appRunning = 1;
+    int appChoice;
+    while(appRunning){
+        system("cls");
+        printf("1-Login\n");
+        printf("2-Register\n");
+        printf("3-Stop App\n");
+        scanf("%d", &appChoice);
+        switch(appChoice){
+            case 1:
+                login();
+                break;
+            case 2:
+                Register();
+                break;
+            case 3:
+                appRunning = 0;
+                break;
+            default:
+                printf("Error in choice\n");
+                getch();
+                break;
+        }
+    }
+};
