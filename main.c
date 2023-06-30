@@ -184,6 +184,8 @@ void morocco(char* cartCNI){
     printf("2-tanger\n");
     printf("3-marrakech\n");
     printf("4-agadir\n");
+    printf("5-rabat\n");
+    printf("6-cassablanca\n");
     scanf("%d", &cityChoice);
     switch(cityChoice){
         case 1:
@@ -197,6 +199,12 @@ void morocco(char* cartCNI){
             break;
         case 4:
             strcpy(city, "agadir");
+            break;
+        case 5:
+            strcpy(city, "rabat");
+            break;
+        case 6:
+            strcpy(city, "cassablanca");
             break;
     }
     strcpy(order.city, city);
@@ -247,6 +255,7 @@ void morocco(char* cartCNI){
         scanf("%d", &YESNO);
     }while(YESNO<1 || YESNO>2);
     int days = order.date.lastDay-order.date.firstDay;
+
     switch(YESNO){
         case 2:{
             char userFileWithExt[200];
@@ -297,7 +306,7 @@ void readHotelData(FILE* data,Hotel* hotelList, int* size){
         printf("____________________________________________________________________________________________________________\n");
             i++;
         }else{
-            printf("-------------------------------------------------------------------------------------------------\n");
+            printf("------------------------------------------------------------------------------------------------------------\n");
             hotelList[i-1].id = i;
             printf("%d", i);
 
