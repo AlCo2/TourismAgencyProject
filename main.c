@@ -532,7 +532,7 @@ Hotel* readHotelData(char* cityWithExt, int* size){
                         char price[10];
                         strcpy(price, token);
                         price[SIZE-1] = '\0';
-                        hotelList[i-2].price = atoi(price);
+                        hotelList[i-1].price = atoi(price);
                         break;
                         }
                 }
@@ -685,7 +685,8 @@ void APP(){
 
 void writeUserIntoFile(char* userFileWithExt, Order order){
     int days = order.date.lastDay-order.date.firstDay;
+    int total = order.hotel.price*order.persons*days;
     FILE* userFile = fopen(userFileWithExt, "a");
-    fprintf(userFile, "%s,%s,%s,%d,%d,%d,%d\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons*days);
+    fprintf(userFile, "%s,%s,%s,%d,%d,%d,%d\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, total);
     fclose(userFile);
 }
