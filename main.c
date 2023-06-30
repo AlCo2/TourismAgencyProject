@@ -171,6 +171,7 @@ int countryList(){
 
 
 void morocco(char* cartCNI){
+    UP:
     system("cls");
     Order order;
     strcpy(order.cartCNI, cartCNI);
@@ -239,8 +240,10 @@ void morocco(char* cartCNI){
         case 1:
             break;
         case 2:
+            goto UP;
             break;
         case 3:
+            return;
             break;
     }
     printf("add more Orders\n 1-yes 2-no \n");
