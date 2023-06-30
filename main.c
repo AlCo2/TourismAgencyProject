@@ -37,6 +37,10 @@ int countryList();
 
 void morocco(char* cartCNI);
 
+void france(char* cartCNI);
+
+void spain(char* cartCNI);
+
 void readHotelData(FILE* data, Hotel* hotelList, int* size);
 
 Date setDays();
@@ -45,7 +49,7 @@ void showOrderInfo(Order order);
 
 void userHaveOrder(char* cartCNI);
 
-void showOrders(FILE* userFile);
+void showOrders(char* userFileExt);
 
 void showUserOrder(Order order);
 
@@ -163,11 +167,11 @@ void welcomeApp(char* cartCNI){
             break;
             //Spain:
         case 2:
-            printf("Spain");
+            spain(cartCNI);
             break;
             //France:
         case 3:
-            printf("France");
+            france(cartCNI);
             break;
     }
 
@@ -260,9 +264,11 @@ void morocco(char* cartCNI){
         case 1:
             break;
         case 2:
-            goto up;
+            welcomeApp(cartCNI);
+            return;
             break;
         case 3:
+            welcomeApp(cartCNI);
             return;
             break;
     }
@@ -282,9 +288,12 @@ void morocco(char* cartCNI){
             if(userFile==NULL){
                 userFile = fopen(userFileWithExt, "w");
                 fprintf(userFile, "%s %s %s %d %d %d %d\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons*days);
+                fclose(userFile);
                 break;
             }
             fprintf(userFile, "%s %s %s %d %d %d %d\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons*days);
+            fclose(userFile);
+            userHaveOrder(cartCNI);
             break;
             }
         case 1:{
@@ -296,10 +305,232 @@ void morocco(char* cartCNI){
             if(userFile==NULL){
                 userFile = fopen(userFileWithExt, "w");
                 fprintf(userFile, "%s %s %s %d %d %d %d\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons*days);
+                fclose(userFile);
                 break;
             }
 
             fprintf(userFile, "%s %s %s %d %d %d %d\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons*days);
+            fclose(userFile);
+            welcomeApp(cartCNI);
+            break;
+            }
+        default:
+            printf("error in choice");
+            getch();
+            break;
+    }
+}
+
+void france(char* cartCNI){
+    up:
+    system("cls");
+    Order order;
+    strcpy(order.cartCNI, cartCNI);
+    int YESNO;
+    int cityChoice, hotelChoice;
+    char city[100];
+    strcpy(order.country, "France");
+    Hotel hotelList[1000];
+    system("cls");
+
+    scanf("%d", &cityChoice);
+    switch(cityChoice){
+        //france city
+    }
+    strcpy(order.city, city);
+    char cityWithExt[200];
+    strcpy(cityWithExt, "france/");
+    strcat(cityWithExt, city);
+    strcat(cityWithExt, ".csv");
+    FILE* cityFile = fopen(cityWithExt, "r");
+    if(cityFile == NULL){
+        printf("city Is not Available Right Now\n");
+        getch();
+        return;
+    }
+    int size;
+    system("cls");
+    readHotelData(cityFile, hotelList,&size);
+    do{
+        printf("Hotel Number: ");
+        scanf("%d", &hotelChoice);
+    }while(hotelChoice<1 || hotelChoice>=size);
+    order.hotel = hotelList[hotelChoice-1];
+    system("cls");
+    printf("Persons: ");
+    scanf("%d", &order.persons);
+    system("cls");
+    order.date = setDays();
+    system("cls");
+
+    int confirm;
+    do{
+        showOrderInfo(order);
+        printf("1-Accept\n2-edit\n3-cancle\n");
+        scanf("%d", &confirm);
+        system("cls");
+    }while(confirm<1 || confirm>3);
+    switch(confirm){
+        case 1:
+            break;
+        case 2:
+            welcomeApp(cartCNI);
+            return;
+            break;
+        case 3:
+            welcomeApp(cartCNI);
+            return;
+            break;
+    }
+    printf("add more Orders\n 1-yes 2-no \n");
+    do{
+        scanf("%d", &YESNO);
+    }while(YESNO<1 || YESNO>2);
+    int days = order.date.lastDay-order.date.firstDay;
+
+    switch(YESNO){
+        case 2:{
+            char userFileWithExt[200];
+            strcpy(userFileWithExt, "userOrders/");
+            strcat(userFileWithExt, order.cartCNI);
+            strcat(userFileWithExt, ".txt");
+            FILE* userFile = fopen(userFileWithExt, "a");
+            if(userFile==NULL){
+                userFile = fopen(userFileWithExt, "w");
+                fprintf(userFile, "%s %s %s %d %d %d %d\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons*days);
+                fclose(userFile);
+                break;
+            }
+            fprintf(userFile, "%s %s %s %d %d %d %d\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons*days);
+            fclose(userFile);
+            userHaveOrder(cartCNI);
+            break;
+            }
+        case 1:{
+            char userFileWithExt[200];
+            strcpy(userFileWithExt, "userOrders/");
+            strcat(userFileWithExt, order.cartCNI);
+            strcat(userFileWithExt, ".txt");
+            FILE* userFile = fopen(userFileWithExt, "a");
+            if(userFile==NULL){
+                userFile = fopen(userFileWithExt, "w");
+                fprintf(userFile, "%s %s %s %d %d %d %d\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons*days);
+                fclose(userFile);
+                break;
+            }
+
+            fprintf(userFile, "%s %s %s %d %d %d %d\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons*days);
+            fclose(userFile);
+            welcomeApp(cartCNI);
+            break;
+            }
+        default:
+            printf("error in choice");
+            getch();
+            break;
+    }
+}
+
+void spain(char* cartCNI){
+    up:
+    system("cls");
+    Order order;
+    strcpy(order.cartCNI, cartCNI);
+    int YESNO;
+    int cityChoice, hotelChoice;
+    char city[100];
+    strcpy(order.country, "Spain");
+    Hotel hotelList[1000];
+    system("cls");
+
+    scanf("%d", &cityChoice);
+    switch(cityChoice){
+        //spain city
+    }
+    strcpy(order.city, city);
+    char cityWithExt[200];
+    strcpy(cityWithExt, "spain/");
+    strcat(cityWithExt, city);
+    strcat(cityWithExt, ".csv");
+    FILE* cityFile = fopen(cityWithExt, "r");
+    if(cityFile == NULL){
+        printf("city Is not Available Right Now\n");
+        getch();
+        return;
+    }
+    int size;
+    system("cls");
+    readHotelData(cityFile, hotelList,&size);
+    do{
+        printf("Hotel Number: ");
+        scanf("%d", &hotelChoice);
+    }while(hotelChoice<1 || hotelChoice>=size);
+    order.hotel = hotelList[hotelChoice-1];
+    system("cls");
+    printf("Persons: ");
+    scanf("%d", &order.persons);
+    system("cls");
+    order.date = setDays();
+    system("cls");
+
+    int confirm;
+    do{
+        showOrderInfo(order);
+        printf("1-Accept\n2-edit\n3-cancle\n");
+        scanf("%d", &confirm);
+        system("cls");
+    }while(confirm<1 || confirm>3);
+    switch(confirm){
+        case 1:
+            break;
+        case 2:
+            welcomeApp(cartCNI);
+            return;
+            break;
+        case 3:
+            welcomeApp(cartCNI);
+            return;
+            break;
+    }
+    printf("add more Orders\n 1-yes 2-no \n");
+    do{
+        scanf("%d", &YESNO);
+    }while(YESNO<1 || YESNO>2);
+    int days = order.date.lastDay-order.date.firstDay;
+
+    switch(YESNO){
+        case 2:{
+            char userFileWithExt[200];
+            strcpy(userFileWithExt, "userOrders/");
+            strcat(userFileWithExt, order.cartCNI);
+            strcat(userFileWithExt, ".txt");
+            FILE* userFile = fopen(userFileWithExt, "a");
+            if(userFile==NULL){
+                userFile = fopen(userFileWithExt, "w");
+                fprintf(userFile, "%s %s %s %d %d %d %d\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons*days);
+                fclose(userFile);
+                break;
+            }
+            fprintf(userFile, "%s %s %s %d %d %d %d\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons*days);
+            fclose(userFile);
+            userHaveOrder(cartCNI);
+            break;
+            }
+        case 1:{
+            char userFileWithExt[200];
+            strcpy(userFileWithExt, "userOrders/");
+            strcat(userFileWithExt, order.cartCNI);
+            strcat(userFileWithExt, ".txt");
+            FILE* userFile = fopen(userFileWithExt, "a");
+            if(userFile==NULL){
+                userFile = fopen(userFileWithExt, "w");
+                fprintf(userFile, "%s %s %s %d %d %d %d\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons*days);
+                fclose(userFile);
+                break;
+            }
+
+            fprintf(userFile, "%s %s %s %d %d %d %d\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price*order.persons*days);
+            fclose(userFile);
             welcomeApp(cartCNI);
             break;
             }
@@ -312,14 +543,14 @@ void morocco(char* cartCNI){
 
 void readHotelData(FILE* data,Hotel* hotelList, int* size){
     int i = 0;
-    int j=0;
+    int j = 0;
     char *token;
     char line[200];
     while(fgets(line, sizeof(line), data)){
         token = strtok(line, ",");
         if(i==0){
             printf(" ");
-        printf("____________________________________________________________________________________________________________\n");
+            printf("____________________________________________________________________________________________________________\n");
             i++;
         }else{
             printf("------------------------------------------------------------------------------------------------------------\n");
@@ -388,6 +619,7 @@ void showUserOrder(Order order){
 }
 
 void userHaveOrder(char* cartCNI){
+    system("cls");
     char userFileWithExt[200];
     strcpy(userFileWithExt, "userOrders/");
     strcat(userFileWithExt, cartCNI);
@@ -403,14 +635,15 @@ void userHaveOrder(char* cartCNI){
             welcomeApp(cartCNI);
         }else{
             system("cls");
-            showOrders(userFile);
             fclose(userFile);
+            showOrders(userFileWithExt);
             getch();
         }
     }
 }
 
-void showOrders(FILE* userFile){
+void showOrders(char* userFileExt){
+    FILE* userFile = fopen(userFileExt, "r");
     char *token;
     char line[200];
     Order order;
@@ -448,4 +681,5 @@ void showOrders(FILE* userFile){
         showUserOrder(order);
         printf("-------------------------\n");
     }
+    fclose(userFile);
 }
