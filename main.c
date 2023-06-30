@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <dirent.h>
 
 
 typedef struct Date{
@@ -22,6 +22,8 @@ typedef struct Order{
     int persons;
     Date date;
 }Order;
+
+void checkFoldersOfApp();
 
 void login();
 
@@ -45,13 +47,13 @@ void userHaveOrder(char* cartCNI);
 
 void showOrders(FILE* userFile);
 
-showUserOrder(Order order);
+void showUserOrder(Order order);
 
 int main()
 {
+    checkFoldersOfApp();
     int appRunning = 1;
     int appChoice;
-
     while(appRunning){
         system("cls");
         printf("1-Login\n");
@@ -75,6 +77,16 @@ int main()
         }
     }
     return 0;
+}
+
+void checkFoldersOfApp(){
+    const char* foldername = "userOrders";
+    DIR* dir = opendir(foldername);
+    if (dir) {
+        closedir(dir);
+    } else {
+        system("mkdir userOrders");
+    }
 }
 
 void login(){
@@ -365,7 +377,7 @@ void showOrderInfo(Order order){
     printf("price: %d$\n", order.hotel.price*order.persons*days);
 }
 
-showUserOrder(Order order){
+void showUserOrder(Order order){
     printf("Country: %s\n", order.country);
     printf("City: %s\n", order.city);
     printf("Hotel: %s\n", order.hotel.hotelName);
