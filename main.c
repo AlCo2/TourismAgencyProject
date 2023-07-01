@@ -1,7 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <dirent.h>
+#include <windows.h>
 
+#define ANIME_TIME 0
+
+COORD coord = {0,0};
+
+void gotoxy(int x, int y);
 
 typedef struct Date{
     int firstDay;
@@ -22,6 +28,10 @@ typedef struct Order{
     int persons;
     Date date;
 }Order;
+
+void squire();
+
+void fastSquire();
 
 void checkFoldersOfApp();
 
@@ -77,10 +87,17 @@ void checkFoldersOfApp(){
 void login(){
     system("cls");
     char cartCNI[30];
+    fastSquire();
+    gotoxy(25, 4);
+    printf("---Login---");
+    gotoxy(30,5);
     printf("Cart CNI: ");
     scanf("%s", cartCNI);
     if(!checkUserExists(cartCNI)){
+        gotoxy(31,6);
         printf("error, user is not regesterd\n");
+        gotoxy(34, 7);
+        printf("please Register");
         getch();
         return;
     }
@@ -91,18 +108,25 @@ void Register(){
     system("cls");
     char cartCNI[30];
     char phoneNumber[30];
+    fastSquire();
+    gotoxy(25, 4);
+    printf("---Register---");
+    gotoxy(30,5);
     printf("Cart CNI: ");
     scanf("%s", cartCNI);
+    gotoxy(30,6);
     printf("Phone Number: ");
     scanf("%s", phoneNumber);
     FILE* usersFile = fopen("users.txt", "a");
     if(usersFile==NULL){
         usersFile = fopen("users.txt", "w");
+        gotoxy(30,7);
         fprintf(usersFile, "%s %s\n", cartCNI, phoneNumber);
     }else{
         char *data;
         char line[200];
         if(checkUserExists(cartCNI)){
+            gotoxy(35,10);
             printf("error, this User Already Regestered\n");
             getch();
             return;
@@ -110,6 +134,8 @@ void Register(){
         fprintf(usersFile, "%s %s\n", cartCNI, phoneNumber);
         fclose(usersFile);
         system("cls");
+        fastSquire();
+        gotoxy(35,10);
         printf("User Regestered Sussecful\n");
         getch();
     }
@@ -161,9 +187,14 @@ void welcomeApp(char* cartCNI){
 int countryList(){
     int choice;
     do{
-    printf("1-Morroco\n");
-    printf("2-Spain\n");
-    printf("3-France\n");
+    fastSquire();
+    gotoxy(30,5);
+    printf("1-Morroco");
+    gotoxy(30,6);
+    printf("2-Spain");
+    gotoxy(30,7);
+    printf("3-France");
+    gotoxy(30,8);
     scanf("%d", &choice);
     }while(choice<1 || choice > 3);
     return choice;
@@ -180,12 +211,20 @@ void morocco(char* cartCNI){
     char city[100];
     strcpy(order.country, "Morocco");
     system("cls");
+    fastSquire();
+    gotoxy(30,5);
     printf("1-Kenitra\n");
+    gotoxy(30,6);
     printf("2-tanger\n");
+    gotoxy(30,7);
     printf("3-marrakech\n");
+    gotoxy(30,8);
     printf("4-agadir\n");
+    gotoxy(45,5);
     printf("5-rabat\n");
+    gotoxy(45,6);
     printf("6-cassablanca\n");
+    gotoxy(45,10);
     scanf("%d", &cityChoice);
     switch(cityChoice){
         case 1:
@@ -224,6 +263,8 @@ void morocco(char* cartCNI){
     }while(hotelChoice<1 || hotelChoice>=size);
     order.hotel = hotelList[hotelChoice-1];
     system("cls");
+    fastSquire();
+    gotoxy(30,5);
     printf("Persons: ");
     scanf("%d", &order.persons);
     system("cls");
@@ -232,7 +273,13 @@ void morocco(char* cartCNI){
     int confirm;
     do{
         showOrderInfo(order);
-        printf("1-Accept\n2-edit\n3-cancle\n");
+        gotoxy(42,13);
+        printf("1-Accept");
+        gotoxy(42,14);
+        printf("2-edit");
+        gotoxy(42,15);
+        printf("3-cancle");
+        gotoxy(42,16);
         scanf("%d", &confirm);
         system("cls");
     }while(confirm<1 || confirm>3);
@@ -246,7 +293,14 @@ void morocco(char* cartCNI){
             return;
             break;
     }
-    printf("add more Orders\n 1-yes 2-no \n");
+    fastSquire();
+    gotoxy(30,5);
+    printf("add more Orders");
+    gotoxy(33,6);
+    printf("1-yes");
+    gotoxy(33,7);
+    printf("2-no");
+    gotoxy(33, 8);
     do{
         scanf("%d", &YESNO);
     }while(YESNO<1 || YESNO>2);
@@ -453,25 +507,29 @@ Hotel* readHotelData(char* cityWithExt, int* size){
     while(fgets(line, sizeof(line), data)){
         token = strtok(line, ",");
         if(i==0){
-            printf(" ");
-            printf("____________________________________________________________________________________________________________\n");
+            printf("+----------------------------------------------------------------------------------------------------------+\n|  ");
             while(token!=NULL){
-                printf("|");
-                printf("%-14s", token);
+                printf("%-20s|", token);
                 token = strtok(NULL, ",");
             }
             i++;
+            gotoxy(0,2);
+            printf("+----------------------------------------------------------------------------------------------------------+\n");
         }else{
-            printf("------------------------------------------------------------------------------------------------------------\n");
             j = 0;
-            printf("%d", i);
+            printf("|%d-", i);
             while(token!=NULL){
                 switch(j){
                     case 0:
                         strcpy(hotelList[i-1].hotelName, token);
+                        printf("%-20s|",token);
+                        break;
+                    case 1:
+                        printf("%-20s|", token);
                         break;
                     case 2:
                         {
+                        printf("%-20s\n", token);
                         int SIZE = strlen(token);
                         char price[10];
                         strcpy(price, token);
@@ -479,16 +537,17 @@ Hotel* readHotelData(char* cityWithExt, int* size){
                         hotelList[i-1].price = atoi(price);
                         break;
                         }
+                    case 3:
+                        printf("| %s", token);
+                        printf("+----------------------------------------------------------------------------------------------------------+\n");
+                        break;
                 }
                 j++;
-                printf("|");
-                printf("%-14s", token);
                 token = strtok(NULL, ",");
             }
             i++;
         }
     }
-    printf("____________________________________________________________________________________________________________\n");
     fclose(data);
     *size = i;
     return ptr;
@@ -496,15 +555,23 @@ Hotel* readHotelData(char* cityWithExt, int* size){
 
 Date setDays(){
     Date date;
+    int x = 30;
+    int y = 5;
+    fastSquire();
     for(int i=0;i<30;i++){
-        if(i==10 || i==20)
-            printf("\n");
-        printf("%-4d", i+1);
+        gotoxy(x, y);
+        if(i==10 || i==20){
+            x = 27;
+            y++;
+        }
+        printf("%-3d", i+1);
+        x+=4;
     }
-    printf("\n");
+    gotoxy(40,10);
     printf("firstDay: ");
     scanf("%d", &date.firstDay);
     do{
+        gotoxy(40,11);
         printf("lastDay: ");
         scanf("%d", &date.lastDay);
     }while(date.firstDay>date.lastDay || date.lastDay==date.firstDay);
@@ -512,23 +579,32 @@ Date setDays(){
 }
 
 void showOrderInfo(Order order){
+    fastSquire();
+    gotoxy(40,5);
     printf("Country: %s\n", order.country);
+    gotoxy(40,6);
     printf("City: %s\n", order.city);
+    gotoxy(40,7);
     printf("Hotel: %s\n", order.hotel.hotelName);
+    gotoxy(40,8);
     printf("Days: %d from %d to %d\n", order.date.lastDay-order.date.firstDay, order.date.firstDay, order.date.lastDay);
+    gotoxy(40,9);
     printf("Person: %d\n", order.persons);
     int days = order.date.lastDay-order.date.firstDay;
+    gotoxy(40,10);
     printf("price: %d$\n", order.hotel.price*order.persons*days);
 }
 
 void showUserOrder(Order order){
-    printf("Country: %s\n", order.country);
-    printf("City: %s\n", order.city);
-    printf("Hotel: %s\n", order.hotel.hotelName);
-    printf("Days: %d from %d to %d\n", order.date.lastDay-order.date.firstDay, order.date.firstDay, order.date.lastDay);
-    printf("Person: %d\n", order.persons);
+    printf("+------------------------+\n");
+    printf("| Country: %-14s|\n", order.country);
+    printf("| City: %-17s|\n", order.city);
+    printf("| Hotel: %-16s|\n", order.hotel.hotelName);
+    printf("| Days: %d from %d to %-5d|\n", order.date.lastDay-order.date.firstDay, order.date.firstDay, order.date.lastDay);
+    printf("| Person: %-15d|\n", order.persons);
     int days = order.date.lastDay-order.date.firstDay;
-    printf("price: %d$\n", order.hotel.price);
+    printf("| price: %d$            |\n", order.hotel.price);
+    printf("+------------------------+\n");
 }
 
 void userHaveOrder(char* cartCNI){
@@ -544,7 +620,14 @@ void userHaveOrder(char* cartCNI){
         int n;
         do{
             system("cls");
-            printf("1-add Order\n2-show Orders\n3-Logout\n");
+            fastSquire();
+            gotoxy(30,5);
+            printf("1-add Order");
+            gotoxy(30,6);
+            printf("2-show Orders");
+            gotoxy(30,7);
+            printf("3-Logout");
+            gotoxy(30,8);
             scanf("%d", &n);
             if(n==1){
                 welcomeApp(cartCNI);
@@ -595,7 +678,6 @@ void showOrders(char* userFileExt){
             token = strtok(NULL, ",");
         }
         showUserOrder(order);
-        printf("-------------------------\n");
     }
     fclose(userFile);
 }
@@ -605,9 +687,14 @@ void APP(){
     int appChoice;
     while(appRunning){
         system("cls");
-        printf("1-Login\n");
-        printf("2-Register\n");
-        printf("3-Stop App\n");
+        squire();
+        gotoxy(30, 10);
+        printf("1-Login");
+        gotoxy(30, 11);
+        printf("2-Register");
+        gotoxy(30, 12);
+        printf("3-Stop App");
+        gotoxy(30,13);
         scanf("%d", &appChoice);
         switch(appChoice){
             case 1:
@@ -617,6 +704,7 @@ void APP(){
                 Register();
                 break;
             case 3:
+                gotoxy(0,25);
                 appRunning = 0;
                 break;
             default:
@@ -633,4 +721,60 @@ void writeUserIntoFile(char* userFileWithExt, Order order){
     FILE* userFile = fopen(userFileWithExt, "a");
     fprintf(userFile, "%s,%s,%s,%d,%d,%d,%d\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, total);
     fclose(userFile);
+}
+
+void gotoxy(int x, int y){
+    coord.X = x;
+    coord.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
+
+void squire(){
+    system("color 3");
+    gotoxy(20, 0);
+    for(int i=0;i<60;i++){
+        printf("_");
+        Sleep(ANIME_TIME);
+    }
+    printf("\n");
+    for(int i=1;i<25;i++){
+        gotoxy(19,i);
+        printf("|");
+        Sleep(ANIME_TIME);
+    }
+    for(int i=0;i<60;i++){
+        printf("_");
+        Sleep(ANIME_TIME);
+    }
+    printf("\n");
+    for(int i=24;i>0;i--){
+        gotoxy(80,i);
+        printf("|");
+        Sleep(ANIME_TIME);
+    }
+    gotoxy(43,2);
+    printf("Tourisme Agency");
+}
+
+void fastSquire(){
+    system("color 3");
+    gotoxy(20, 0);
+    for(int i=0;i<60;i++){
+        printf("_");
+    }
+    printf("\n");
+    for(int i=1;i<25;i++){
+        gotoxy(19,i);
+        printf("|");
+    }
+    for(int i=0;i<60;i++){
+        printf("_");
+    }
+    printf("\n");
+    for(int i=24;i>0;i--){
+        gotoxy(80,i);
+        printf("|");
+    }
+    gotoxy(43,2);
+    printf("Tourisme Agency");
 }
