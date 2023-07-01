@@ -47,10 +47,6 @@ int countryList();
 
 void newTourismeOrder(char* cartCNI, char* country);
 
-void france(char* cartCNI);
-
-void spain(char* cartCNI);
-
 Hotel* readHotelData(char* cityWithExt, int* size);
 
 Date setDays();
