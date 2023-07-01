@@ -45,7 +45,7 @@ void welcomeApp(char* cartCNI);
 
 int countryList();
 
-void morocco(char* cartCNI);
+void newTourismeOrder(char* cartCNI, char* country);
 
 void france(char* cartCNI);
 
@@ -66,6 +66,16 @@ void showUserOrder(Order order);
 void APP();
 
 void writeUserIntoFile(char* userFileWithExt, Order order);
+
+char* moroccoCityChoice();
+
+Order createOrder(char* country, char* cartCNI);
+
+Hotel getHotelChoice(char* cityWithExt);
+
+char* createCityWithExt(char* country, char* city);
+
+int getHowManyPerson();
 
 int main()
 {
@@ -170,15 +180,13 @@ void welcomeApp(char* cartCNI){
     switch(countryChoice){
         //morocco:
         case 1:
-            morocco(cartCNI);
+            newTourismeOrder(cartCNI, "Morocco");
             break;
-            //Spain:
         case 2:
-            spain(cartCNI);
+            newTourismeOrder(cartCNI, "Spain");
             break;
-            //France:
         case 3:
-            france(cartCNI);
+            newTourismeOrder(cartCNI, "France");
             break;
     }
 
@@ -201,77 +209,14 @@ int countryList(){
 }
 
 
-void morocco(char* cartCNI){
+void newTourismeOrder(char* cartCNI, char* country){
     UP:
     system("cls");
     Order order;
-    strcpy(order.cartCNI, cartCNI);
-    int YESNO;
-    int cityChoice, hotelChoice;
-    char city[100];
-    strcpy(order.country, "Morocco");
-    system("cls");
-    fastSquire();
-    gotoxy(30,5);
-    printf("1-Kenitra\n");
-    gotoxy(30,6);
-    printf("2-tanger\n");
-    gotoxy(30,7);
-    printf("3-marrakech\n");
-    gotoxy(30,8);
-    printf("4-agadir\n");
-    gotoxy(45,5);
-    printf("5-rabat\n");
-    gotoxy(45,6);
-    printf("6-cassablanca\n");
-    gotoxy(45,10);
-    scanf("%d", &cityChoice);
-    switch(cityChoice){
-        case 1:
-            strcpy(city, "kenitra");
-            break;
-        case 2:
-            strcpy(city, "tanger");
-            break;
-        case 3:
-            strcpy(city, "marrakech");
-            break;
-        case 4:
-            strcpy(city, "agadir");
-            break;
-        case 5:
-            strcpy(city, "rabat");
-            break;
-        case 6:
-            strcpy(city, "cassablanca");
-            break;
-    }
-    strcpy(order.city, city);
-    char cityWithExt[200];
-    strcpy(cityWithExt, "morocco/");
-    strcat(cityWithExt, city);
-    strcat(cityWithExt, ".csv");
-    int size;
-    system("cls");
-    Hotel* hotelList = readHotelData(cityWithExt,&size);
-    if(hotelList==NULL){
-        return;
-    }
+    int YESNO, confirm;
+    order = createOrder(country,cartCNI);
     do{
-        printf("Hotel Number: ");
-        scanf("%d", &hotelChoice);
-    }while(hotelChoice<1 || hotelChoice>=size);
-    order.hotel = hotelList[hotelChoice-1];
-    system("cls");
-    fastSquire();
-    gotoxy(30,5);
-    printf("Persons: ");
-    scanf("%d", &order.persons);
-    system("cls");
-    order.date = setDays();
-    system("cls");
-    int confirm;
-    do{
+        system("cls");
         showOrderInfo(order);
         gotoxy(42,13);
         printf("1-Accept");
@@ -319,169 +264,7 @@ void morocco(char* cartCNI){
             strcat(userFileWithExt, order.cartCNI);
             strcat(userFileWithExt, ".txt");
             writeUserIntoFile(userFileWithExt, order);
-            break;
-            }
-        default:
-            printf("error in choice");
-            getch();
-            break;
-    }
-}
-
-void france(char* cartCNI){
-    UP:
-    system("cls");
-    Order order;
-    strcpy(order.cartCNI, cartCNI);
-    int YESNO;
-    int cityChoice, hotelChoice;
-    char city[100];
-    strcpy(order.country, "France");
-    system("cls");
-
-    scanf("%d", &cityChoice);
-    switch(cityChoice){
-
-    }
-    strcpy(order.city, city);
-    char cityWithExt[200];
-    strcpy(cityWithExt, "france/");
-    strcat(cityWithExt, city);
-    strcat(cityWithExt, ".csv");
-    int size;
-    system("cls");
-    Hotel* hotelList = readHotelData(cityWithExt,&size);
-    if(hotelList==NULL){
-        return;
-    }
-    do{
-        printf("Hotel Number: ");
-        scanf("%d", &hotelChoice);
-    }while(hotelChoice<1 || hotelChoice>=size);
-    order.hotel = hotelList[hotelChoice-1];
-    system("cls");
-    printf("Persons: ");
-    scanf("%d", &order.persons);
-    system("cls");
-    order.date = setDays();
-    system("cls");
-    int confirm;
-    do{
-        showOrderInfo(order);
-        printf("1-Accept\n2-edit\n3-cancle\n");
-        scanf("%d", &confirm);
-        system("cls");
-    }while(confirm<1 || confirm>3);
-    switch(confirm){
-        case 1:
-            break;
-        case 2:
             goto UP;
-            break;
-        case 3:
-            return;
-            break;
-    }
-    printf("add more Orders\n 1-yes 2-no \n");
-    do{
-        scanf("%d", &YESNO);
-    }while(YESNO<1 || YESNO>2);
-    switch(YESNO){
-        case 2:{
-            char userFileWithExt[200];
-            strcpy(userFileWithExt, "userOrders/");
-            strcat(userFileWithExt, order.cartCNI);
-            strcat(userFileWithExt, ".txt");
-            writeUserIntoFile(userFileWithExt, order);
-            break;
-            }
-        case 1:{
-            char userFileWithExt[200];
-            strcpy(userFileWithExt, "userOrders/");
-            strcat(userFileWithExt, order.cartCNI);
-            strcat(userFileWithExt, ".txt");
-            writeUserIntoFile(userFileWithExt, order);
-            break;
-            }
-        default:
-            printf("error in choice");
-            getch();
-            break;
-    }
-}
-
-void spain(char* cartCNI){
-    UP:
-    system("cls");
-    Order order;
-    strcpy(order.cartCNI, cartCNI);
-    int YESNO;
-    int cityChoice, hotelChoice;
-    char city[100];
-    strcpy(order.country, "Spain");
-    system("cls");
-    scanf("%d", &cityChoice);
-    switch(cityChoice){
-        //spain city
-    }
-    strcpy(order.city, city);
-    char cityWithExt[200];
-    strcpy(cityWithExt, "spain/");
-    strcat(cityWithExt, city);
-    strcat(cityWithExt, ".csv");
-    int size;
-    system("cls");
-    Hotel* hotelList = readHotelData(cityWithExt,&size);
-    if(hotelList==NULL){
-        return;
-    }
-    do{
-        printf("Hotel Number: ");
-        scanf("%d", &hotelChoice);
-    }while(hotelChoice<1 || hotelChoice>=size);
-    order.hotel = hotelList[hotelChoice-1];
-    system("cls");
-    printf("Persons: ");
-    scanf("%d", &order.persons);
-    system("cls");
-    order.date = setDays();
-    system("cls");
-    int confirm;
-    do{
-        showOrderInfo(order);
-        printf("1-Accept\n2-edit\n3-cancle\n");
-        scanf("%d", &confirm);
-        system("cls");
-    }while(confirm<1 || confirm>3);
-    switch(confirm){
-        case 1:
-            break;
-        case 2:
-            goto UP;
-            break;
-        case 3:
-            return;
-            break;
-    }
-    printf("add more Orders\n 1-yes 2-no \n");
-    do{
-        scanf("%d", &YESNO);
-    }while(YESNO<1 || YESNO>2);
-    switch(YESNO){
-        case 2:{
-            char userFileWithExt[200];
-            strcpy(userFileWithExt, "userOrders/");
-            strcat(userFileWithExt, order.cartCNI);
-            strcat(userFileWithExt, ".txt");
-            writeUserIntoFile(userFileWithExt, order);
-            break;
-            }
-        case 1:{
-            char userFileWithExt[200];
-            strcpy(userFileWithExt, "userOrders/");
-            strcat(userFileWithExt, order.cartCNI);
-            strcat(userFileWithExt, ".txt");
-            writeUserIntoFile(userFileWithExt, order);
             break;
             }
         default:
@@ -492,7 +275,8 @@ void spain(char* cartCNI){
 }
 
 Hotel* readHotelData(char* cityWithExt, int* size){
-   FILE* data = fopen(cityWithExt, "r");
+    FILE* data = fopen(cityWithExt, "r");
+    system("cls");
     if(data == NULL){
         printf("city Is not Available Right Now\n");
         getch();
@@ -600,10 +384,10 @@ void showUserOrder(Order order){
     printf("| Country: %-14s|\n", order.country);
     printf("| City: %-17s|\n", order.city);
     printf("| Hotel: %-16s|\n", order.hotel.hotelName);
-    printf("| Days: %d from %d to %-5d|\n", order.date.lastDay-order.date.firstDay, order.date.firstDay, order.date.lastDay);
+    printf("| Days: %-2d from %-2d to %-2d |\n", order.date.lastDay-order.date.firstDay, order.date.firstDay, order.date.lastDay);
     printf("| Person: %-15d|\n", order.persons);
     int days = order.date.lastDay-order.date.firstDay;
-    printf("| price: %d$            |\n", order.hotel.price);
+    printf("| price: %-4d$           |\n", order.hotel.price);
     printf("+------------------------+\n");
 }
 
@@ -626,18 +410,26 @@ void userHaveOrder(char* cartCNI){
             gotoxy(30,6);
             printf("2-show Orders");
             gotoxy(30,7);
-            printf("3-Logout");
+            printf("3-manage Orders");
             gotoxy(30,8);
+            printf("4-Logout");
+            gotoxy(30,9);
             scanf("%d", &n);
-            if(n==1){
-                welcomeApp(cartCNI);
-            }else if(n==2){
-                system("cls");
-                fclose(userFile);
-                showOrders(userFileWithExt);
-                getch();
+            switch(n){
+                case 1:
+                    welcomeApp(cartCNI);
+                    break;
+                case 2:
+                    system("cls");
+                    fclose(userFile);
+                    showOrders(userFileWithExt);
+                    getch();
+                    break;
+                case 3:
+
+                    break;
             }
-        }while(n!=3);
+        }while(n!=4);
     }
 }
 
@@ -777,4 +569,100 @@ void fastSquire(){
     }
     gotoxy(43,2);
     printf("Tourisme Agency");
+}
+
+char* moroccoCityChoice(){
+    int cityChoice;
+    fastSquire();
+    gotoxy(30,5);
+    printf("1-Kenitra\n");
+    gotoxy(30,6);
+    printf("2-tanger\n");
+    gotoxy(30,7);
+    printf("3-marrakech\n");
+    gotoxy(30,8);
+    printf("4-agadir\n");
+    gotoxy(45,5);
+    printf("5-rabat\n");
+    gotoxy(45,6);
+    printf("6-cassablanca\n");
+    gotoxy(45,10);
+    scanf("%d", &cityChoice);
+    switch(cityChoice){
+        case 1:
+            return "Kenitra";
+            break;
+        case 2:
+            return "Tanger";
+            break;
+        case 3:
+            return "marrakech";
+            break;
+        case 4:
+            return "agadir";
+            break;
+        case 5:
+            return "rabat";
+            break;
+        case 6:
+            return "cassablanca";
+            break;
+    }
+
+}
+
+Hotel getHotelChoice(char* cityWithExt){
+    int size;
+    int hotelChoice;
+    Hotel* hotelList = readHotelData(cityWithExt,&size);
+    if(hotelList==NULL){
+        return;
+    }
+    do{
+        printf("Hotel Number: ");
+        scanf("%d", &hotelChoice);
+    }while(hotelChoice<1 || hotelChoice>=size);
+    return hotelList[hotelChoice-1];
+}
+
+char* createCityWithExt(char* country, char* city){
+    char* cityWithExt;
+    strcpy(cityWithExt, country);
+    strcat(cityWithExt, "/");
+    strcat(cityWithExt, city);
+    strcat(cityWithExt, ".csv");
+    return cityWithExt;
+}
+
+Order createOrder(char* country, char* cartCNI){
+    Order order;
+    strcpy(order.cartCNI, cartCNI);
+    strcpy(order.country, country);
+    if(strcmp(country, "Morocco")==0){
+        strcpy(order.city,moroccoCityChoice());
+    }else if(strcmp(country, "France")==0){
+        printf("Error, This Country Not Avaible now");
+        return;
+    }else if(strcmp(country, "Spain")==0){
+        printf("Error, This Country Not Avaible now");
+        return;
+    }
+    order.hotel = getHotelChoice(createCityWithExt(order.country, order.city));
+    order.persons = getHowManyPerson();
+    gotoxy(30,5);
+    system("cls");
+    order.date = setDays();
+    return order;
+}
+
+int getHowManyPerson(){
+    int n;
+    do{
+        system("cls");
+        fastSquire();
+        gotoxy(30,5);
+        printf("Persons: ");
+        scanf("%d", &n);
+    }while(n<1);
+    return n;
 }
