@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1688228872 source:e:\c\toursimagency\main.c
+1688316348 source:e:\c\toursimagency\main.c
 	<stdio.h>
 	<stdlib.h>
 	<dirent.h>
