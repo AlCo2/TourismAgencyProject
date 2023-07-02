@@ -3,7 +3,7 @@
 #include <dirent.h>
 #include <windows.h>
 
-#define ANIME_TIME 0
+#define ANIME_TIME 1
 
 COORD coord = {0,0};
 
