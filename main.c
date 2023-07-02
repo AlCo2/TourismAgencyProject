@@ -3,7 +3,7 @@
 #include <dirent.h>
 #include <windows.h>
 
-#define ANIME_TIME 1
+#define ANIME_TIME 0
 
 COORD coord = {0,0};
 
@@ -79,11 +79,17 @@ void manageOrders(char* userFileWithExt);
 
 void editUserOrder(char* userFileWithExt);
 
+void deleteUserOrder(char* userFileWithExt);
+
 Order findTheOrder(int id, char* userFileWithExt);
 
 Order editOrder(Order order, int id);
 
 void renewOrder(int id, Order order,char* userFileExt);
+
+void deleteOrder(int id, char* userFileExt);
+
+void showOrderInfoToDelete(Order order);
 
 int main()
 {
@@ -389,6 +395,23 @@ void showOrderInfo(Order order){
     printf("price: %d$\n", order.hotel.price*order.persons*days);
 }
 
+void showOrderInfoToDelete(Order order){
+    fastSquire();
+    gotoxy(40,5);
+    printf("Country: %s\n", order.country);
+    gotoxy(40,6);
+    printf("City: %s\n", order.city);
+    gotoxy(40,7);
+    printf("Hotel: %s\n", order.hotel.hotelName);
+    gotoxy(40,8);
+    printf("Days: %d from %d to %d\n", order.date.lastDay-order.date.firstDay, order.date.firstDay, order.date.lastDay);
+    gotoxy(40,9);
+    printf("Person: %d\n", order.persons);
+    int days = order.date.lastDay-order.date.firstDay;
+    gotoxy(40,10);
+    printf("price: %d$\n", order.hotel.price);
+}
+
 void showUserOrder(Order order, int id){
     printf("+------------------------+\n");
     printf("| id: %-4d               |\n", id);
@@ -538,23 +561,28 @@ void gotoxy(int x, int y){
 
 void squire(){
     system("color 3");
-    gotoxy(20, 0);
+    gotoxy(19, 0);
+    printf("+");
     for(int i=0;i<60;i++){
-        printf("_");
+        printf("-");
         Sleep(ANIME_TIME);
     }
+    printf("+");
     printf("\n");
-    for(int i=1;i<25;i++){
+    for(int i=1;i<24;i++){
         gotoxy(19,i);
         printf("|");
         Sleep(ANIME_TIME);
     }
+    gotoxy(19, 24);
+    printf("+");
     for(int i=0;i<60;i++){
-        printf("_");
+        printf("-");
         Sleep(ANIME_TIME);
     }
+    printf("+");
     printf("\n");
-    for(int i=24;i>0;i--){
+    for(int i=23;i>0;i--){
         gotoxy(80,i);
         printf("|");
         Sleep(ANIME_TIME);
@@ -564,21 +592,26 @@ void squire(){
 }
 
 void fastSquire(){
-    system("color 3");
-    gotoxy(20, 0);
+ system("color 3");
+    gotoxy(19, 0);
+    printf("+");
     for(int i=0;i<60;i++){
-        printf("_");
+        printf("-");
     }
+    printf("+");
     printf("\n");
-    for(int i=1;i<25;i++){
+    for(int i=1;i<24;i++){
         gotoxy(19,i);
         printf("|");
     }
+    gotoxy(19, 24);
+    printf("+");
     for(int i=0;i<60;i++){
-        printf("_");
+        printf("-");
     }
+    printf("+");
     printf("\n");
-    for(int i=24;i>0;i--){
+    for(int i=23;i>0;i--){
         gotoxy(80,i);
         printf("|");
     }
@@ -696,7 +729,7 @@ void manageOrders(char* userFileWithExt){
             editUserOrder(userFileWithExt);
             break;
         case 2:
-            //next
+            deleteUserOrder(userFileWithExt);
             break;
     }
 
@@ -708,6 +741,13 @@ void editUserOrder(char* userFileWithExt){
     int id;
     system("cls");
     int MaxId = showOrders(userFileWithExt);
+    if(MaxId==0){
+        fastSquire();
+        gotoxy(30,5);
+        printf("Error, there is no Active Order");
+        getch();
+        return;
+    }
     system("cls");
     do{
         showOrders(userFileWithExt);
@@ -841,4 +881,59 @@ void renewOrder(int id, Order order, char* userFileExt){
     fclose(tempFile);
     remove(userFileExt);
     rename(tempFileExt, userFileExt);
+}
+
+void deleteOrder(int id, char* userFileExt){
+    int i = 0;
+    char tempFileExt[] = "userOrders/temp.txt";
+    FILE* userFile = fopen(userFileExt, "r");
+    FILE* tempFile = fopen(tempFileExt, "w");
+    char line[200];
+    while(fgets(line, sizeof(line), userFile)){
+        if(id!=i){
+            fprintf(tempFile,"%s", line);
+        }
+    }
+    fclose(userFile);
+    fclose(tempFile);
+    remove(userFileExt);
+    rename(tempFileExt, userFileExt);
+}
+
+void deleteUserOrder(char* userFileWithExt){
+    Order order;
+    int choix;
+    int id;
+    system("cls");
+    int MaxId = showOrders(userFileWithExt);
+    if(MaxId==0){
+        fastSquire();
+        gotoxy(30,5);
+        printf("Error, there is no Active Order");
+        getch();
+        return;
+    }
+    system("cls");
+    do{
+        showOrders(userFileWithExt);
+        printf("Order id: ");
+        scanf("%d", &id);
+    }while(id<1 || id>MaxId);
+    system("cls");
+    order = findTheOrder(id-1, userFileWithExt);
+    do{
+        system("cls");
+        showOrderInfoToDelete(order);
+        gotoxy(40,15);
+        printf("1-Delete 2-cancle");
+        gotoxy(40,16);
+        scanf("%d", &choix);
+    }while(choix<1 || choix>2);
+    if(choix==1){
+        if(MaxId==1){
+            remove(userFileWithExt);
+            return;
+        }
+        deleteOrder(id-1, userFileWithExt);
+    }
 }
