@@ -906,7 +906,15 @@ Order editOrder(Order order,int id){
         switch(choice){
             case 1:
                 system("cls");
-                strcpy(order.city,moroccoCityChoice());
+                if(strcmp(order.country, "Morocco")==0){
+                    strcpy(order.city,moroccoCityChoice());
+                }else if(strcmp(order.country, "France")==0){
+                    strcpy(order.city, franceCityChoice());
+                }else if(strcmp(order.country, "Spain")==0){
+                    strcpy(order.city, spainCityChoice());
+                }else if(strcmp(order.country, "Italy")==0){
+                    strcpy(order.city, italyCityChoice());
+                }
                 strcpy(cityWithExt, order.country);
                 strcat(cityWithExt,"/");
                 strcat(cityWithExt, order.city);
