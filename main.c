@@ -3,7 +3,7 @@
 #include <dirent.h>
 #include <windows.h>
 
-#define ANIME_TIME 0
+#define ANIME_TIME 1
 
 COORD coord = {0,0};
 
@@ -64,6 +64,9 @@ void APP();
 void writeUserIntoFile(char* userFileWithExt, Order order);
 
 char* moroccoCityChoice();
+char* franceCityChoice();
+char* italyCityChoice();
+char* spainCityChoice();
 
 Order createOrder(char* country, char* cartCNI);
 
@@ -204,6 +207,8 @@ void welcomeApp(char* cartCNI){
         case 3:
             newTourismeOrder(cartCNI, "France");
             break;
+        case 4:
+            newTourismeOrder(cartCNI, "Italy");
     }
 
 }
@@ -219,8 +224,10 @@ int countryList(){
     gotoxy(30,7);
     printf("3-France");
     gotoxy(30,8);
+    printf("4-Italy");
+    gotoxy(30,9);
     scanf("%d", &choice);
-    }while(choice<1 || choice > 3);
+    }while(choice<1 || choice > 4);
     return choice;
 }
 
@@ -659,6 +666,81 @@ char* moroccoCityChoice(){
 
 }
 
+char* franceCityChoice(){
+    int cityChoice;
+    fastSquire();
+    gotoxy(30,5);
+    printf("1-marcial\n");
+    gotoxy(30,6);
+    printf("2-paris\n");
+    gotoxy(30,7);
+    printf("3-tollosse\n");
+    gotoxy(45,8);
+    scanf("%d", &cityChoice);
+    switch(cityChoice){
+        case 1:
+            return "marcial";
+            break;
+        case 2:
+            return "paris";
+            break;
+        case 3:
+            return "tollosse";
+            break;
+    }
+
+}
+
+char* spainCityChoice(){
+    int cityChoice;
+    fastSquire();
+    gotoxy(30,5);
+    printf("1-madrid\n");
+    gotoxy(30,6);
+    printf("2-barcallona\n");
+    gotoxy(30,7);
+    printf("3-sevilla\n");
+    gotoxy(45,8);
+    scanf("%d", &cityChoice);
+    switch(cityChoice){
+        case 1:
+            return "madrid";
+            break;
+        case 2:
+            return "barcallona";
+            break;
+        case 3:
+            return "sevilla";
+            break;
+    }
+
+}
+
+char* italyCityChoice(){
+    int cityChoice;
+    fastSquire();
+    gotoxy(30,5);
+    printf("1-mellano\n");
+    gotoxy(30,6);
+    printf("2-nappoli\n");
+    gotoxy(30,7);
+    printf("3-torino\n");
+    gotoxy(45,8);
+    scanf("%d", &cityChoice);
+    switch(cityChoice){
+        case 1:
+            return "mellano";
+            break;
+        case 2:
+            return "nappoli";
+            break;
+        case 3:
+            return "torino";
+            break;
+    }
+
+}
+
 Hotel getHotelChoice(char* cityWithExt){
     int size;
     int hotelChoice;
@@ -681,11 +763,11 @@ Order createOrder(char* country, char* cartCNI){
     if(strcmp(country, "Morocco")==0){
         strcpy(order.city,moroccoCityChoice());
     }else if(strcmp(country, "France")==0){
-        printf("Error, This Country Not Avaible now");
-        return;
+        strcpy(order.city, franceCityChoice());
     }else if(strcmp(country, "Spain")==0){
-        printf("Error, This Country Not Avaible now");
-        return;
+        strcpy(order.city, spainCityChoice());
+    }else if(strcmp(country, "Italy")==0){
+        strcpy(order.city, italyCityChoice());
     }
     strcpy(cityWithExt, order.country);
     strcat(cityWithExt, "/");
