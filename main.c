@@ -193,8 +193,6 @@ int checkUserExists(char* cartCNI){
                 fclose(file);
                 return 1;
             }
-            printf("%s", data);
-            getch();
             data = strtok(NULL, " ");
             break;
         }
