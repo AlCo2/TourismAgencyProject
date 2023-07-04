@@ -135,6 +135,9 @@ void Register(){
     system("cls");
     char cartCNI[30];
     char phoneNumber[30];
+    char firstName[50];
+    char lastName[50];
+
     fastSquire();
     gotoxy(25, 4);
     printf("---Register---");
@@ -142,13 +145,19 @@ void Register(){
     printf("Cart CNI: ");
     scanf("%s", cartCNI);
     gotoxy(30,6);
+    printf("firstName: ");
+    scanf("%s", firstName);
+    gotoxy(30,7);
+    printf("lastName: ");
+    scanf("%s", lastName);
+    gotoxy(30,8);
     printf("Phone Number: ");
     scanf("%s", phoneNumber);
     FILE* usersFile = fopen("users.txt", "a");
     if(usersFile==NULL){
         usersFile = fopen("users.txt", "w");
-        gotoxy(30,7);
-        fprintf(usersFile, "%s %s\n", cartCNI, phoneNumber);
+        gotoxy(30,9);
+        fprintf(usersFile, "%s %s %s %s\n", cartCNI, firstName, lastName, phoneNumber);
         fclose(usersFile);
     }else{
         char *data;
@@ -160,7 +169,7 @@ void Register(){
             fclose(usersFile);
             return;
         }
-        fprintf(usersFile, "%s %s\n", cartCNI, phoneNumber);
+        fprintf(usersFile, "%s %s %s %s\n", cartCNI, firstName, lastName, phoneNumber);
         fclose(usersFile);
         system("cls");
         fastSquire();
@@ -184,6 +193,8 @@ int checkUserExists(char* cartCNI){
                 fclose(file);
                 return 1;
             }
+            printf("%s", data);
+            getch();
             data = strtok(NULL, " ");
             break;
         }
