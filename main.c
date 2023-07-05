@@ -29,6 +29,8 @@ typedef struct Order{
     Date date;
 }Order;
 
+int mainMenu();
+
 void squire();
 
 void fastSquire();
@@ -93,6 +95,9 @@ void renewOrder(int id, Order order,char* userFileExt);
 void deleteOrder(int id, char* userFileExt);
 
 void showOrderInfoToDelete(Order order);
+
+void arrowHere(int realPosition, int arrowPosition);
+
 
 int main()
 {
@@ -455,18 +460,7 @@ void userHaveOrder(char* cartCNI){
         int n;
         fclose(userFile);
         do{
-            system("cls");
-            fastSquire();
-            gotoxy(30,5);
-            printf("1-add Order");
-            gotoxy(30,6);
-            printf("2-show Orders");
-            gotoxy(30,7);
-            printf("3-manage Orders");
-            gotoxy(30,8);
-            printf("4-Logout");
-            gotoxy(30,9);
-            scanf("%d", &n);
+            n = userMainMenu();
             switch(n){
                 case 1:
                     welcomeApp(cartCNI);
@@ -533,15 +527,7 @@ void APP(){
     int appChoice;
     while(appRunning){
         system("cls");
-        squire();
-        gotoxy(30, 10);
-        printf("1-Login");
-        gotoxy(30, 11);
-        printf("2-Register");
-        gotoxy(30, 12);
-        printf("3-Stop App");
-        gotoxy(30,13);
-        scanf("%d", &appChoice);
+        appChoice = mainMenu();
         switch(appChoice){
             case 1:
                 login();
@@ -805,16 +791,7 @@ int getHowManyPerson(){
 void manageOrders(char* userFileWithExt){
     int choice;
     do{
-    system("cls");
-    fastSquire();
-    gotoxy(30, 10);
-    printf("1-edit Order");
-    gotoxy(30, 11);
-    printf("2-delete Order");
-    gotoxy(30, 12);
-    printf("3-back");
-    gotoxy(30,13);
-    scanf("%d", &choice);
+    choice = manageOrderMenu();
     switch(choice){
         case 1:
             editUserOrder(userFileWithExt);
@@ -905,13 +882,7 @@ Order editOrder(Order order,int id){
     do{
         system("cls");
         days = order.date.lastDay-order.date.firstDay;
-        showUserOrder(order, id);
-        printf("1-change City\n");
-        printf("2-change Hotel\n");
-        printf("3-change Person Number\n");
-        printf("4-change date\n");
-        printf("5-Confirme 6-cancle\n");
-        scanf("%d", &choice);
+        choice = editOrderMenu(order, id);
         switch(choice){
             case 1:
                 system("cls");
@@ -1035,4 +1006,111 @@ void deleteUserOrder(char* userFileWithExt){
         }
         deleteOrder(id-1, userFileWithExt);
     }
+}
+
+void arrowHere(int realPosition, int arrowPosition){
+    if(arrowPosition==realPosition){
+        printf("  -->");
+    }else{
+        printf("     ");
+    }
+}
+
+int mainMenu(){
+    int position = 1;
+    int key = 0;
+    squire();
+    while(key!=13){
+        system("cls");
+        fastSquire();
+        gotoxy(30, 10);
+        arrowHere(1, position);printf(" Login");
+        gotoxy(30, 11);
+        arrowHere(2, position);printf(" Register");
+        gotoxy(30, 12);
+        arrowHere(3, position);printf(" Stop App");
+        key = getch();
+        if(key == 80 && position!=3){
+            position++;
+        }else if(key == 72 && position!=1){
+            position--;
+        }else{
+            position = position;
+        }
+    }
+    return position;
+}
+
+int userMainMenu(){
+    int position = 1;
+    int key = 0;
+    while(key!=13){
+        system("cls");
+        fastSquire();
+        gotoxy(30,5);
+        arrowHere(1, position);printf(" add Order");
+        gotoxy(30, 6);
+        arrowHere(2, position);printf(" show Orders");
+        gotoxy(30, 7);
+        arrowHere(3, position);printf(" manage Orders");
+        gotoxy(30, 8);
+        arrowHere(4, position);printf(" Logout");
+        key = getch();
+        if(key == 80 && position!=4){
+            position++;
+        }else if(key == 72 && position!=1){
+            position--;
+        }else{
+            position = position;
+        }
+    }
+    return position;
+}
+
+int manageOrderMenu(){
+    int position = 1;
+    int key = 0;
+    while(key!=13){
+        system("cls");
+        fastSquire();
+        gotoxy(30,10);
+        arrowHere(1, position);printf(" edit Order");
+        gotoxy(30, 11);
+        arrowHere(2, position);printf(" delete Order");
+        gotoxy(30, 12);
+        arrowHere(3, position);printf(" back");
+        key = getch();
+        if(key == 80 && position!=3){
+            position++;
+        }else if(key == 72 && position!=1){
+            position--;
+        }else{
+            position = position;
+        }
+    }
+    return position;
+}
+
+int editOrderMenu(Order order, int id){
+    int position = 1;
+    int key = 0;
+    while(key!=13){
+        system("cls");
+        showUserOrder(order, id);
+        arrowHere(1, position);printf(" change City\n");
+        arrowHere(2, position);printf(" change Hotel\n");
+        arrowHere(3, position);printf(" change Person Number\n");
+        arrowHere(4, position);printf(" change date\n");
+        arrowHere(5, position);printf(" Confirme\n");
+        arrowHere(6, position);printf(" cancle");
+        key = getch();
+        if(key == 80 && position!=6){
+            position++;
+        }else if(key == 72 && position!=1){
+            position--;
+        }else{
+            position = position;
+        }
+    }
+    return position;
 }
