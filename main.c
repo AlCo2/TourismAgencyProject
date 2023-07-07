@@ -234,21 +234,31 @@ void welcomeApp(char* cartCNI){
 }
 
 int countryList(){
-    int choice;
-    do{
+    int position = 1;
+    int key = 0;
     fastSquire();
-    gotoxy(30,5);
-    printf("1-Morroco");
-    gotoxy(30,6);
-    printf("2-Spain");
-    gotoxy(30,7);
-    printf("3-France");
-    gotoxy(30,8);
-    printf("4-Italy");
-    gotoxy(30,9);
-    scanf("%d", &choice);
-    }while(choice<1 || choice > 4);
-    return choice;
+    while(key!=13){
+        system("cls");
+        fastSquire();
+        gotoxy(30, 10);
+        arrowHere(1, position);printf(" Morroco");
+        gotoxy(30, 11);
+        arrowHere(2, position);printf(" Spain");
+        gotoxy(30, 12);
+        arrowHere(3, position);printf(" France");
+        gotoxy(30,13);
+        arrowHere(4, position);printf(" Italy");
+        key = getch();
+        if(key == 80 && position!=4){
+            position++;
+        }else if(key == 72 && position!=1){
+            position--;
+        }else{
+            position = position;
+        }
+    }
+    return position;
+
 }
 
 
@@ -636,23 +646,33 @@ void fastSquire(){
 }
 
 char* moroccoCityChoice(){
-    int cityChoice;
-    fastSquire();
-    gotoxy(30,5);
-    printf("1-Kenitra\n");
-    gotoxy(30,6);
-    printf("2-tanger\n");
-    gotoxy(30,7);
-    printf("3-marrakech\n");
-    gotoxy(30,8);
-    printf("4-agadir\n");
-    gotoxy(45,5);
-    printf("5-rabat\n");
-    gotoxy(45,6);
-    printf("6-cassablanca\n");
-    gotoxy(45,10);
-    scanf("%d", &cityChoice);
-    switch(cityChoice){
+    int position = 1;
+    int key = 0;
+    while(key!=13){
+        system("cls");
+        fastSquire();
+        gotoxy(30,5);
+        arrowHere(1, position);printf(" Kenitra");
+        gotoxy(30, 6);
+        arrowHere(2, position);printf(" Tanger");
+        gotoxy(30, 7);
+        arrowHere(3, position);printf(" marrakech");
+        gotoxy(30, 8);
+        arrowHere(4, position);printf(" agadir");
+        gotoxy(30, 9);
+        arrowHere(5, position);printf(" rabat");
+        gotoxy(30, 10);
+        arrowHere(6, position);printf(" cassablanca");
+        key = getch();
+        if(key == 80 && position!=6){
+            position++;
+        }else if(key == 72 && position!=1){
+            position--;
+        }else{
+            position = position;
+        }
+    }
+    switch(position){
         case 1:
             return "Kenitra";
             break;
@@ -672,7 +692,6 @@ char* moroccoCityChoice(){
             return "cassablanca";
             break;
     }
-
 }
 
 char* franceCityChoice(){
@@ -833,9 +852,13 @@ void editUserOrder(char* userFileWithExt){
     system("cls");
     do{
         showOrders(userFileWithExt);
+        printf("0 to go back\n");
         printf("Order id: ");
         scanf("%d", &id);
-    }while(id<1 || id>MaxId);
+        if(id==0){
+            return;
+        }
+    }while(id<0 || id>MaxId);
     system("cls");
     order = findTheOrder(id-1, userFileWithExt);
     order = editOrder(order, id);
@@ -1012,20 +1035,35 @@ void deleteUserOrder(char* userFileWithExt){
     system("cls");
     do{
         showOrders(userFileWithExt);
+        printf("0 to go back\n");
         printf("Order id: ");
         scanf("%d", &id);
+        if(id==0){
+            return;
+        }
     }while(id<1 || id>MaxId);
     system("cls");
     order = findTheOrder(id-1, userFileWithExt);
-    do{
+    int position = 1;
+    int key = 0;
+    while(key!=13){
         system("cls");
+        fastSquire();
         showOrderInfoToDelete(order);
         gotoxy(40,15);
-        printf("1-Delete 2-cancle");
+        arrowHere(1, position);printf(" Delete");
         gotoxy(40,16);
-        scanf("%d", &choix);
-    }while(choix<1 || choix>2);
-    if(choix==1){
+        arrowHere(2, position);printf(" Cancle");
+        key = getch();
+        if(key == 80 && position!=2){
+            position++;
+        }else if(key == 72 && position!=1){
+            position--;
+        }else{
+            position = position;
+        }
+    }
+    if(position==1){
         if(MaxId==1){
             remove(userFileWithExt);
             return;
