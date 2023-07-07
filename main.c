@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <windows.h>
+#include <time.h>
 
 #define ANIME_TIME 1
 
@@ -11,7 +12,11 @@ void gotoxy(int x, int y);
 
 typedef struct Date{
     int firstDay;
+    int firstMonth;
     int lastDay;
+    int lastMonth;
+    int year;
+    int days;
 }Date;
 
 typedef struct Hotel{
@@ -98,6 +103,7 @@ void showOrderInfoToDelete(Order order);
 
 void arrowHere(int realPosition, int arrowPosition);
 
+Date setUserDate();
 
 int main()
 {
@@ -379,23 +385,19 @@ Date setDays(){
     int x = 30;
     int y = 5;
     fastSquire();
-    for(int i=0;i<30;i++){
-        gotoxy(x, y);
-        if(i==10 || i==20){
-            x = 27;
-            y++;
-        }
-        printf("%-3d", i+1);
-        x+=4;
-    }
-    gotoxy(40,10);
-    printf("firstDay: ");
-    scanf("%d", &date.firstDay);
+
     do{
+        system("cls");
+        gotoxy(40,10);
+        printf("firstDay: ");
+        scanf("%d", &date.firstDay);
+    }while(date.firstDay < 1 || date.firstDay > 31);
+    do{
+        system("cls");
         gotoxy(40,11);
         printf("lastDay: ");
         scanf("%d", &date.lastDay);
-    }while(date.firstDay>date.lastDay || date.lastDay==date.firstDay);
+    }while( date.firstDay>date.lastDay || date.lastDay==date.firstDay || date.lastDay > 31);
     return date;
 }
 
@@ -408,7 +410,7 @@ void showOrderInfo(Order order){
     gotoxy(40,7);
     printf("Hotel: %s\n", order.hotel.hotelName);
     gotoxy(40,8);
-    printf("Days: %d from %d to %d\n", order.date.lastDay-order.date.firstDay, order.date.firstDay, order.date.lastDay);
+    printf("Days: %d from %d/%d to %d/%d\n", order.date.days, order.date.firstDay,order.date.firstMonth, order.date.lastDay, order.date.lastMonth);
     gotoxy(40,9);
     printf("Person: %d\n", order.persons);
     int days = order.date.lastDay-order.date.firstDay;
@@ -425,7 +427,7 @@ void showOrderInfoToDelete(Order order){
     gotoxy(40,7);
     printf("Hotel: %s\n", order.hotel.hotelName);
     gotoxy(40,8);
-    printf("Days: %d from %d to %d\n", order.date.lastDay-order.date.firstDay, order.date.firstDay, order.date.lastDay);
+    printf("Days: %d from %d/%d to %d/%d\n", order.date.days, order.date.firstMonth,order.date.firstDay, order.date.lastMonth, order.date.lastDay);
     gotoxy(40,9);
     printf("Person: %d\n", order.persons);
     int days = order.date.lastDay-order.date.firstDay;
@@ -439,7 +441,7 @@ void showUserOrder(Order order, int id){
     printf("| Country: %-14s|\n", order.country);
     printf("| City: %-17s|\n", order.city);
     printf("| Hotel: %-16s|\n", order.hotel.hotelName);
-    printf("| Days: %-2d from %-2d to %-2d |\n", order.date.lastDay-order.date.firstDay, order.date.firstDay, order.date.lastDay);
+    printf("| Days:%-2d %-2d/%-2d to %-2d/%-2d |\n", order.date.days, order.date.firstDay,order.date.firstMonth, order.date.lastDay, order.date.lastMonth);
     printf("| Person: %-15d|\n", order.persons);
     int days = order.date.lastDay-order.date.firstDay;
     printf("| price: %-4d$           |\n", order.hotel.price);
@@ -500,15 +502,27 @@ int showOrders(char* userFileExt){
                     strcpy(order.hotel.hotelName, token);
                     break;
                 case 3:
-                    order.date.firstDay = atoi(token);
+                    order.date.year = atoi(token);
                     break;
                 case 4:
-                    order.date.lastDay = atoi(token);
+                    order.date.firstMonth = atoi(token);
                     break;
                 case 5:
-                    order.persons = atoi(token);
+                    order.date.firstDay = atoi(token);
                     break;
                 case 6:
+                    order.date.lastMonth = atoi(token);
+                    break;
+                case 7:
+                    order.date.lastDay = atoi(token);
+                    break;
+                case 8:
+                    order.date.days = atoi(token);
+                    break;
+                case 9:
+                    order.persons = atoi(token);
+                    break;
+                case 10:
                     order.hotel.price = atoi(token);
                     break;
             }
@@ -548,10 +562,10 @@ void APP(){
 };
 
 void writeUserIntoFile(char* userFileWithExt, Order order){
-    int days = order.date.lastDay-order.date.firstDay;
+    int days = order.date.days;
     int total = order.hotel.price*order.persons*days;
     FILE* userFile = fopen(userFileWithExt, "a");
-    fprintf(userFile, "%s,%s,%s,%d,%d,%d,%d\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, total);
+    fprintf(userFile, "%s,%s,%s,%d,%d,%d,%d,%d,%d,%d,%d\n", order.country, order.city, order.hotel.hotelName,order.date.year,order.date.firstMonth,order.date.firstDay, order.date.lastMonth,order.date.lastDay,order.date.days,order.persons, total);
     fclose(userFile);
 }
 
@@ -772,7 +786,7 @@ Order createOrder(char* country, char* cartCNI){
     order.persons = getHowManyPerson();
     gotoxy(30,5);
     system("cls");
-    order.date = setDays();
+    order.date = setUserDate();
     return order;
 }
 
@@ -849,15 +863,27 @@ Order findTheOrder(int id, char* userFileWithExt){
                     strcpy(order.hotel.hotelName, token);
                     break;
                 case 3:
-                    order.date.firstDay = atoi(token);
+                    order.date.year = atoi(token);
                     break;
                 case 4:
-                    order.date.lastDay = atoi(token);
+                    order.date.firstMonth = atoi(token);
                     break;
                 case 5:
-                    order.persons = atoi(token);
+                    order.date.firstDay = atoi(token);
                     break;
                 case 6:
+                    order.date.lastMonth = atoi(token);
+                    break;
+                case 7:
+                    order.date.lastDay = atoi(token);
+                    break;
+                case 8:
+                    order.date.days = atoi(token);
+                    break;
+                case 9:
+                    order.persons = atoi(token);
+                    break;
+                case 10:
                     order.hotel.price = atoi(token);
                     break;
             }
@@ -881,7 +907,7 @@ Order editOrder(Order order,int id){
     char cityWithExt[200];
     do{
         system("cls");
-        days = order.date.lastDay-order.date.firstDay;
+        days = order.date.days;
         choice = editOrderMenu(order, id);
         switch(choice){
             case 1:
@@ -941,7 +967,7 @@ void renewOrder(int id, Order order, char* userFileExt){
     char line[200];
     while(fgets(line, sizeof(line), userFile)){
         if(id==i){
-            fprintf(tempFile, "%s,%s,%s,%d,%d,%d,%d\n", order.country, order.city, order.hotel.hotelName,order.date.firstDay, order.date.lastDay,order.persons, order.hotel.price);
+            fprintf(tempFile, "%s,%s,%s,%d,%d,%d,%d,%d,%d,%d,%d\n", order.country, order.city, order.hotel.hotelName,order.date.year,order.date.firstMonth,order.date.firstDay, order.date.lastMonth,order.date.lastDay,order.date.days,order.persons, order.hotel.price);
         }else{
             fprintf(tempFile,"%s", line);
         }
@@ -1113,4 +1139,106 @@ int editOrderMenu(Order order, int id){
         }
     }
     return position;
+}
+
+
+Date setUserDate(){
+    Date date;
+    time_t t = time(NULL);
+    struct tm *currentTime = localtime(&t);
+    struct tm finishedDate = {0};
+    struct tm startedDate = {0};
+
+    startedDate.tm_year = currentTime->tm_year;
+    startedDate.tm_mon = currentTime->tm_mon;
+    startedDate.tm_mday = currentTime->tm_mday;
+    startedDate.tm_hour = finishedDate.tm_min = finishedDate.tm_sec = 0;
+    startedDate.tm_isdst = -1;
+
+    finishedDate.tm_year = currentTime->tm_year;
+    finishedDate.tm_mon = currentTime->tm_mon;
+    finishedDate.tm_mday = currentTime->tm_mday;
+    finishedDate.tm_hour = finishedDate.tm_min = finishedDate.tm_sec = 0;
+    finishedDate.tm_isdst = -1;
+
+    do{
+        system("cls");
+        showMonth(currentTime->tm_year, currentTime->tm_mon);
+        gotoxy(50, 4);
+        printf("start Month: ");
+        scanf("%d", &startedDate.tm_mon);
+    }while(startedDate.tm_mon<currentTime->tm_mon+1 || startedDate.tm_mon>12);
+
+    do{
+        system("cls");
+        if(currentTime->tm_mon+1==startedDate.tm_mon){
+            showDays(startedDate.tm_mon, currentTime->tm_mday);
+        }else{
+            showDays(startedDate.tm_mon, 0);
+        }
+        gotoxy(50,8);
+        printf("start day: ");
+        scanf("%d", &startedDate.tm_mday);
+    }while(currentTime->tm_mon+1==startedDate.tm_mon && startedDate.tm_mday<currentTime->tm_mday || startedDate.tm_mday>30);
+
+    do{
+        system("cls");
+        showMonth(currentTime->tm_year, startedDate.tm_mon-1);
+        gotoxy(50, 4);
+        printf("end Month: ");
+        scanf("%d", &finishedDate.tm_mon);
+    }while(finishedDate.tm_mon<startedDate.tm_mon || finishedDate.tm_mon>12);
+
+    do{
+        system("cls");
+        if(startedDate.tm_mon==finishedDate.tm_mon){
+            showDays(startedDate.tm_mon, startedDate.tm_mday);
+        }else{
+            showDays(finishedDate, 0);
+        }
+        gotoxy(50,8);
+        printf("end day: ");
+        scanf("%d", &finishedDate.tm_mday);
+    }while(startedDate.tm_mon==finishedDate.tm_mon && finishedDate.tm_mday<=startedDate.tm_mday || finishedDate.tm_mday>31);
+
+    time_t t1 = mktime(&finishedDate);
+    time_t t2 = mktime(&startedDate);
+
+    double dt = difftime(t1, t2);
+    int days = round(dt / 86400);
+
+    date.days = days;
+    date.firstDay = startedDate.tm_mday;
+    date.firstMonth = startedDate.tm_mon;
+    date.lastDay = finishedDate.tm_mday;
+    date.lastMonth = finishedDate.tm_mon;
+    date.year = currentTime->tm_year+1900;
+    return date;
+}
+
+
+void showMonth(int year, int start){
+    gotoxy(50, 2);
+    printf("==== YEAR: %d ====\n", year+1900);
+    gotoxy(50, 3);
+    for(int i=start;i<12;i++){
+        printf("%-3d", i+1);
+    }
+}
+
+void showDays(int month,int start){
+    int x = 50;
+    int y = 4;
+    gotoxy(50,2);
+    printf("==== MONTH: %d ====", month);
+    gotoxy(50,3);
+    for(int i=start;i<30;i++){
+        gotoxy(x, y);
+        if(i==10 || i==20){
+            x = 27;
+            y++;
+        }
+        printf("%-3d", i+1);
+        x+=4;
+    }
 }

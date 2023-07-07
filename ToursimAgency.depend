@@ -1,7 +1,8 @@
 # depslib dependency file v1.0
-1688553857 source:e:\c\toursimagency\main.c
+1688738330 source:e:\c\toursimagency\main.c
 	<stdio.h>
 	<stdlib.h>
 	<dirent.h>
 	<windows.h>
+	<time.h>
 
