@@ -1210,7 +1210,7 @@ Date setUserDate(){
     do{
         system("cls");
         if(currentTime->tm_mon+1==startedDate.tm_mon){
-            showDays(startedDate.tm_mon, currentTime->tm_mday);
+            showDays(startedDate.tm_mon, currentTime->tm_mday-1);
         }else{
             showDays(startedDate.tm_mon, 0);
         }
