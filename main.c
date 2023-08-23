@@ -423,7 +423,7 @@ void showOrderInfo(Order order){
     printf("Days: %d from %d/%d to %d/%d\n", order.date.days, order.date.firstDay,order.date.firstMonth, order.date.lastDay, order.date.lastMonth);
     gotoxy(40,9);
     printf("Person: %d\n", order.persons);
-    int days = order.date.lastDay-order.date.firstDay;
+    int days = order.date.days;
     gotoxy(40,10);
     printf("price: %d$\n", order.hotel.price*order.persons*days);
 }
