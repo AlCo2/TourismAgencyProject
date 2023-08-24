@@ -1307,39 +1307,41 @@ Date setUserDate(){
     finishedDate.tm_mday = currentTime->tm_mday;
     finishedDate.tm_hour = finishedDate.tm_min = finishedDate.tm_sec = 0;
     finishedDate.tm_isdst = -1;
-
+    int monthChoice;
     do{
         system("cls");
         showMonth(currentTime->tm_year, currentTime->tm_mon);
         gotoxy(50, 4);
         printf("start Month: ");
-        scanf("%d", &startedDate.tm_mon);
-    }while(startedDate.tm_mon<currentTime->tm_mon+1 || startedDate.tm_mon>12);
+        scanf("%d", &monthChoice);
+        startedDate.tm_mon = monthChoice-1;
+    }while(startedDate.tm_mon<currentTime->tm_mon || startedDate.tm_mon>11);
 
     do{
         system("cls");
-        if(currentTime->tm_mon+1==startedDate.tm_mon){
-            showDays(startedDate.tm_mon, currentTime->tm_mday-1);
+        if(currentTime->tm_mon==startedDate.tm_mon){
+            showDays(startedDate.tm_mon+1, currentTime->tm_mday-1);
         }else{
             showDays(startedDate.tm_mon, 0);
         }
         gotoxy(50,8);
         printf("start day: ");
         scanf("%d", &startedDate.tm_mday);
-    }while(currentTime->tm_mon+1==startedDate.tm_mon && startedDate.tm_mday<currentTime->tm_mday || startedDate.tm_mday>30);
+    }while(currentTime->tm_mon==startedDate.tm_mon && startedDate.tm_mday<currentTime->tm_mday || startedDate.tm_mday>30);
 
     do{
         system("cls");
-        showMonth(currentTime->tm_year, startedDate.tm_mon-1);
+        showMonth(currentTime->tm_year, startedDate.tm_mon);
         gotoxy(50, 4);
         printf("end Month: ");
-        scanf("%d", &finishedDate.tm_mon);
-    }while(finishedDate.tm_mon<startedDate.tm_mon || finishedDate.tm_mon>12);
+        scanf("%d", &monthChoice);
+        finishedDate.tm_mon = monthChoice-1;
+    }while(finishedDate.tm_mon<startedDate.tm_mon || finishedDate.tm_mon>11);
 
     do{
         system("cls");
         if(startedDate.tm_mon==finishedDate.tm_mon){
-            showDays(startedDate.tm_mon, startedDate.tm_mday);
+            showDays(startedDate.tm_mon+1, startedDate.tm_mday);
         }else{
             showDays(finishedDate, 0);
         }
@@ -1356,9 +1358,9 @@ Date setUserDate(){
 
     date.days = days;
     date.firstDay = startedDate.tm_mday;
-    date.firstMonth = startedDate.tm_mon;
+    date.firstMonth = startedDate.tm_mon+1;
     date.lastDay = finishedDate.tm_mday;
-    date.lastMonth = finishedDate.tm_mon;
+    date.lastMonth = finishedDate.tm_mon+1;
     date.year = currentTime->tm_year+1900;
     return date;
 }
