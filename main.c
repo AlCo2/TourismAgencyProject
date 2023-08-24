@@ -3,6 +3,7 @@
 #include <dirent.h>
 #include <windows.h>
 #include <time.h>
+#include <string.h>
 
 #define ANIME_TIME 1
 
@@ -127,12 +128,16 @@ void login(){
     char cartCNI[30];
     fastSquire();
     gotoxy(25, 4);
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, 2);
     printf("---Login---");
     gotoxy(30,5);
+    SetConsoleTextAttribute(hConsole, 7);
     printf("Cart CNI: ");
     scanf("%s", cartCNI);
     if(!checkUserExists(cartCNI)){
         gotoxy(31,6);
+        SetConsoleTextAttribute(hConsole, 4);
         printf("error, user is not regesterd\n");
         gotoxy(34, 7);
         printf("please Register");
@@ -151,18 +156,28 @@ void Register(){
 
     fastSquire();
     gotoxy(25, 4);
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, 1);
     printf("---Register---");
     gotoxy(30,5);
+    SetConsoleTextAttribute(hConsole, 3);
     printf("Cart CNI: ");
+    SetConsoleTextAttribute(hConsole, 7);
     scanf("%s", cartCNI);
     gotoxy(30,6);
+    SetConsoleTextAttribute(hConsole, 3);
     printf("firstName: ");
+    SetConsoleTextAttribute(hConsole, 7);
     scanf("%s", firstName);
     gotoxy(30,7);
+    SetConsoleTextAttribute(hConsole, 3);
     printf("lastName: ");
+    SetConsoleTextAttribute(hConsole, 7);
     scanf("%s", lastName);
     gotoxy(30,8);
+    SetConsoleTextAttribute(hConsole, 3);
     printf("Phone Number: ");
+    SetConsoleTextAttribute(hConsole, 7);
     scanf("%s", phoneNumber);
     FILE* usersFile = fopen("users.txt", "a");
     if(usersFile==NULL){
@@ -175,6 +190,7 @@ void Register(){
         char line[200];
         if(checkUserExists(cartCNI)){
             gotoxy(35,10);
+            SetConsoleTextAttribute(hConsole, 4);
             printf("error, this User Already Regestered\n");
             getch();
             fclose(usersFile);
@@ -185,6 +201,7 @@ void Register(){
         system("cls");
         fastSquire();
         gotoxy(35,10);
+        SetConsoleTextAttribute(hConsole, 2);
         printf("User Regestered Sussecful\n");
         getch();
     }
@@ -263,24 +280,13 @@ int countryList(){
 
 
 void newTourismeOrder(char* cartCNI, char* country){
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     UP:
     system("cls");
     Order order;
     int YESNO, confirm;
     order = createOrder(country,cartCNI);
-    do{
-        system("cls");
-        showOrderInfo(order);
-        gotoxy(42,13);
-        printf("1-Accept");
-        gotoxy(42,14);
-        printf("2-edit");
-        gotoxy(42,15);
-        printf("3-cancle");
-        gotoxy(42,16);
-        scanf("%d", &confirm);
-        system("cls");
-    }while(confirm<1 || confirm>3);
+    confirm = confirmOrderMenu(order);
     switch(confirm){
         case 1:
             break;
@@ -291,17 +297,8 @@ void newTourismeOrder(char* cartCNI, char* country){
             return;
             break;
     }
-    fastSquire();
-    gotoxy(30,5);
-    printf("add more Orders");
-    gotoxy(33,6);
-    printf("1-yes");
-    gotoxy(33,7);
-    printf("2-no");
-    gotoxy(33, 8);
-    do{
-        scanf("%d", &YESNO);
-    }while(YESNO<1 || YESNO>2);
+    system("cls");
+    YESNO = confirmAddOrderMenu();
     switch(YESNO){
         case 2:{
             char userFileWithExt[200];
@@ -321,6 +318,7 @@ void newTourismeOrder(char* cartCNI, char* country){
             break;
             }
         default:
+            SetConsoleTextAttribute(hConsole, 4);
             printf("error in choice");
             getch();
             break;
@@ -331,6 +329,8 @@ Hotel* readHotelData(char* cityWithExt, int* size){
     FILE* data = fopen(cityWithExt, "r");
     system("cls");
     if(data == NULL){
+        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+        SetConsoleTextAttribute(hConsole, 4);
         printf("city Is not Available Right Now\n");
         getch();
         return NULL;
@@ -341,32 +341,61 @@ Hotel* readHotelData(char* cityWithExt, int* size){
     int j = 0;
     char *token;
     char line[200];
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     while(fgets(line, sizeof(line), data)){
         token = strtok(line, ",");
         if(i==0){
-            printf("+----------------------------------------------------------------------------------------------------------+\n|  ");
+            SetConsoleTextAttribute(hConsole, 3);
+            printf("+----------------------+--------------------+--------------------+-----------------------------------------+\n|  ");
             while(token!=NULL){
-                printf("%-20s|", token);
+                int end = 0;
+                if(token[strlen(token)-1]=='\n'){
+                    token[strlen(token)-1] = '\0';
+                    end = 1;
+                }
+                if(!end){
+                    SetConsoleTextAttribute(hConsole, 2);
+                    printf("%-20s", token);
+                    SetConsoleTextAttribute(hConsole, 3);
+                    printf("|");
+                }else{
+                    SetConsoleTextAttribute(hConsole, 2);
+                    printf("%-41s", token);
+                    SetConsoleTextAttribute(hConsole, 3);
+                    printf("|");
+                }
                 token = strtok(NULL, ",");
             }
             i++;
             gotoxy(0,2);
-            printf("+----------------------------------------------------------------------------------------------------------+\n");
+            printf("+----------------------+--------------------+--------------------+-----------------------------------------+\n");
         }else{
             j = 0;
-            printf("|%d-", i);
+            SetConsoleTextAttribute(hConsole, 3);
+            printf("|");
+            SetConsoleTextAttribute(hConsole, 7);
+            printf("%d-", i);
             while(token!=NULL){
                 switch(j){
                     case 0:
                         strcpy(hotelList[i-1].hotelName, token);
-                        printf("%-20s|",token);
+                        SetConsoleTextAttribute(hConsole, 7);
+                        printf("%-20s",token);
+                        SetConsoleTextAttribute(hConsole, 3);
+                        printf("|");
                         break;
                     case 1:
-                        printf("%-20s|", token);
+                        SetConsoleTextAttribute(hConsole, 7);
+                        printf("%-20s",token);
+                        SetConsoleTextAttribute(hConsole, 3);
+                        printf("|");
                         break;
                     case 2:
                         {
-                        printf("%-20s\n", token);
+                        SetConsoleTextAttribute(hConsole, 7);
+                        printf("%-62s", token);
+                        SetConsoleTextAttribute(hConsole, 3);
+                        printf("|\n");
                         int SIZE = strlen(token);
                         char price[10];
                         strcpy(price, token);
@@ -375,8 +404,14 @@ Hotel* readHotelData(char* cityWithExt, int* size){
                         break;
                         }
                     case 3:
-                        printf("| %s", token);
-                        printf("+----------------------------------------------------------------------------------------------------------+\n");
+                        token[strlen(token)-1] = '\0';
+                        SetConsoleTextAttribute(hConsole, 3);
+                        printf("|");
+                        SetConsoleTextAttribute(hConsole, 7);
+                        printf(" %-105s", token);
+                        SetConsoleTextAttribute(hConsole, 3);
+                        printf("|\n");
+                        printf("+----------------------+--------------------+--------------------+-----------------------------------------+\n");
                         break;
                 }
                 j++;
@@ -547,6 +582,7 @@ int showOrders(char* userFileExt){
 }
 
 void APP(){
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     int appRunning = 1;
     int appChoice;
     while(appRunning){
@@ -564,6 +600,7 @@ void APP(){
                 appRunning = 0;
                 break;
             default:
+                SetConsoleTextAttribute(hConsole, 4);
                 printf("Error in choice\n");
                 getch();
                 break;
@@ -642,7 +679,10 @@ void fastSquire(){
         printf("|");
     }
     gotoxy(43,2);
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, 1);
     printf("Tourisme Agency");
+    SetConsoleTextAttribute(hConsole, 7);
 }
 
 char* moroccoCityChoice(){
@@ -770,17 +810,32 @@ char* italyCityChoice(){
 }
 
 Hotel getHotelChoice(char* cityWithExt){
-    int size;
-    int hotelChoice;
-    Hotel* hotelList = readHotelData(cityWithExt,&size);
-    if(hotelList==NULL){
-        return;
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    Hotel* hotelList;
+    int position = 1;
+    int key = 0;
+    while(key!=13){
+        system("cls");
+        int size;
+        hotelList = readHotelData(cityWithExt,&size);
+        if(hotelList==NULL){
+            return;
+        }
+        printf("Hotel Choice: \n");
+        SetConsoleTextAttribute(hConsole, 7);
+        for(int i=0;i<size-1;i++){
+            arrowHere(i+1, position);printf(" %s\n", hotelList[i].hotelName);
+        }
+        key = getch();
+        if(key == 80 && position!=size-1){
+            position++;
+        }else if(key == 72 && position!=1){
+            position--;
+        }else{
+            position = position;
+        }
     }
-    do{
-        printf("Hotel Number: ");
-        scanf("%d", &hotelChoice);
-    }while(hotelChoice<1 || hotelChoice>=size);
-    return hotelList[hotelChoice-1];
+    return hotelList[position-1];
 }
 
 Order createOrder(char* country, char* cartCNI){
@@ -845,6 +900,8 @@ void editUserOrder(char* userFileWithExt){
     if(MaxId==0){
         fastSquire();
         gotoxy(30,5);
+        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+        SetConsoleTextAttribute(hConsole, 4);
         printf("Error, there is no Active Order");
         getch();
         return;
@@ -969,8 +1026,8 @@ Order editOrder(Order order,int id){
             case 4:
                 system("cls");
                 order.hotel.price/=days;
-                order.date = setDays();
-                days = order.date.lastDay-order.date.firstDay;
+                order.date = setUserDate();
+                days = order.date.days;
                 order.hotel.price*=days;
                 break;
         }
@@ -1028,6 +1085,8 @@ void deleteUserOrder(char* userFileWithExt){
     if(MaxId==0){
         fastSquire();
         gotoxy(30,5);
+        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+        SetConsoleTextAttribute(hConsole, 4);
         printf("Error, there is no Active Order");
         getch();
         return;
@@ -1087,6 +1146,8 @@ int mainMenu(){
     while(key!=13){
         system("cls");
         fastSquire();
+        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+        SetConsoleTextAttribute(hConsole, 7);
         gotoxy(30, 10);
         arrowHere(1, position);printf(" Login");
         gotoxy(30, 11);
@@ -1145,6 +1206,54 @@ int manageOrderMenu(){
         arrowHere(3, position);printf(" back");
         key = getch();
         if(key == 80 && position!=3){
+            position++;
+        }else if(key == 72 && position!=1){
+            position--;
+        }else{
+            position = position;
+        }
+    }
+    return position;
+}
+
+int confirmOrderMenu(Order order){
+    int position = 1;
+    int key = 0;
+    while(key!=13){
+        system("cls");
+        showOrderInfo(order);
+        gotoxy(42,13);
+        arrowHere(1, position);printf(" Accept\n");
+        gotoxy(42,14);
+        arrowHere(2, position);printf(" Edit\n");
+        gotoxy(42,15);
+        arrowHere(3, position);printf(" Cancle\n");
+        key = getch();
+        if(key == 80 && position!=3){
+            position++;
+        }else if(key == 72 && position!=1){
+            position--;
+        }else{
+            position = position;
+        }
+    }
+    return position;
+}
+int confirmAddOrderMenu(){
+    int position = 1;
+    int key = 0;
+    while(key!=13){
+        system("cls");
+
+        fastSquire();
+        gotoxy(30,5);
+        printf("add more Orders");
+        gotoxy(42,13);
+        arrowHere(1, position);printf(" Yes\n");
+        gotoxy(42,14);
+        arrowHere(2, position);printf(" No\n");
+        key = getch();
+        if(key == 80 && position!=2){
             position++;
         }else if(key == 72 && position!=1){
             position--;
@@ -1256,21 +1365,36 @@ Date setUserDate(){
 
 
 void showMonth(int year, int start){
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     gotoxy(50, 2);
+    SetConsoleTextAttribute(hConsole, 7);
     printf("==== YEAR: %d ====\n", year+1900);
     gotoxy(50, 3);
-    for(int i=start;i<12;i++){
+    for(int i=0;i<12;i++){
+        if(i<start){
+            SetConsoleTextAttribute(hConsole, 4);
+        }else{
+            SetConsoleTextAttribute(hConsole, 2);
+        }
         printf("%-3d", i+1);
     }
+    SetConsoleTextAttribute(hConsole, 7);
 }
 
 void showDays(int month,int start){
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     int x = 50;
     int y = 4;
     gotoxy(50,2);
+    SetConsoleTextAttribute(hConsole, 7);
     printf("==== MONTH: %d ====", month);
     gotoxy(50,3);
-    for(int i=start;i<30;i++){
+    for(int i=0;i<30;i++){
+        if(i<start){
+            SetConsoleTextAttribute(hConsole, 4);
+        }else{
+            SetConsoleTextAttribute(hConsole, 2);
+        }
         gotoxy(x, y);
         if(i==10 || i==20){
             x = 27;
@@ -1279,4 +1403,5 @@ void showDays(int month,int start){
         printf("%-3d", i+1);
         x+=4;
     }
+    SetConsoleTextAttribute(hConsole, 7);
 }
