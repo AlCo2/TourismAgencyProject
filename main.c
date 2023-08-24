@@ -1069,6 +1069,7 @@ void deleteOrder(int id, char* userFileExt){
         if(id!=i){
             fprintf(tempFile,"%s", line);
         }
+        i++;
     }
     fclose(userFile);
     fclose(tempFile);
@@ -1091,8 +1092,8 @@ void deleteUserOrder(char* userFileWithExt){
         getch();
         return;
     }
-    system("cls");
     do{
+        system("cls");
         showOrders(userFileWithExt);
         printf("0 to go back\n");
         printf("Order id: ");
@@ -1126,8 +1127,10 @@ void deleteUserOrder(char* userFileWithExt){
         if(MaxId==1){
             remove(userFileWithExt);
             return;
+        }else{
+            deleteOrder(id-1, userFileWithExt);
         }
-        deleteOrder(id-1, userFileWithExt);
+
     }
 }
 
