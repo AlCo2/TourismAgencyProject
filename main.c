@@ -180,31 +180,69 @@ void Register(){
     SetConsoleTextAttribute(hConsole, 7);
     scanf("%s", phoneNumber);
     FILE* usersFile = fopen("users.txt", "a");
-    if(usersFile==NULL){
-        usersFile = fopen("users.txt", "w");
-        gotoxy(30,9);
-        fprintf(usersFile, "%s %s %s %s\n", cartCNI, firstName, lastName, phoneNumber);
+    char *data;
+    char line[200];
+    if(checkUserExists(cartCNI)){
+        gotoxy(35,10);
+        SetConsoleTextAttribute(hConsole, 4);
+        printf("error, this User Already Regestered\n");
+        getch();
         fclose(usersFile);
-    }else{
-        char *data;
-        char line[200];
-        if(checkUserExists(cartCNI)){
+        return;
+    }
+    //check cartNational
+    if(isdigit(cartCNI[0])){
+        gotoxy(35,10);
+        SetConsoleTextAttribute(hConsole, 4);
+        printf("error, this cartCNI is not valid");
+        gotoxy(35,11);
+        printf("(cartCNI doesn't start with a number)");
+        getch();
+        return;
+    }
+    for(int i=0;firstName[i]!='\0';i++){
+        if(isdigit(firstName[i])){
             gotoxy(35,10);
             SetConsoleTextAttribute(hConsole, 4);
-            printf("error, this User Already Regestered\n");
+            printf("error, there is a number in your firstName");
             getch();
-            fclose(usersFile);
             return;
         }
-        fprintf(usersFile, "%s %s %s %s\n", cartCNI, firstName, lastName, phoneNumber);
-        fclose(usersFile);
-        system("cls");
-        fastSquire();
-        gotoxy(35,10);
-        SetConsoleTextAttribute(hConsole, 2);
-        printf("User Regestered Sussecful\n");
-        getch();
     }
+    for(int i=0;lastName[i]!='\0';i++){
+        if(isdigit(lastName[i])){
+            gotoxy(35,10);
+            SetConsoleTextAttribute(hConsole, 4);
+            printf("error, there is a number in your lastName");
+            getch();
+            return;
+        }
+    }
+    //check user phone Number is Valid:
+    for(int i=0;phoneNumber[i]!='\0';i++){
+        if (!isdigit(phoneNumber[i])) {
+            gotoxy(35,10);
+            SetConsoleTextAttribute(hConsole, 4);
+            printf("error, phone number can't be a char");
+            getch();
+            return;
+        }
+    }
+    if(strlen(phoneNumber)!=10){
+        gotoxy(35,10);
+        SetConsoleTextAttribute(hConsole, 4);
+        printf("error, phone number have to be 10 Numbers");
+        getch();
+        return;
+    }
+    fprintf(usersFile, "%s %s %s %s\n", cartCNI, firstName, lastName, phoneNumber);
+    fclose(usersFile);
+    system("cls");
+    fastSquire();
+    gotoxy(35,10);
+    SetConsoleTextAttribute(hConsole, 2);
+    printf("User Regestered Sussecful\n");
+    getch();
 }
 
 int checkUserExists(char* cartCNI){
@@ -514,7 +552,14 @@ void userHaveOrder(char* cartCNI){
                     break;
                 case 2:
                     system("cls");
-                    showOrders(userFileWithExt);
+                    int MaxId = showOrders(userFileWithExt);
+                    if(MaxId==0){
+                        fastSquire();
+                        gotoxy(30,5);
+                        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+                        SetConsoleTextAttribute(hConsole, 4);
+                        printf("Error, there is no Active Order");
+                    }
                     getch();
                     break;
                 case 3:
@@ -735,17 +780,27 @@ char* moroccoCityChoice(){
 }
 
 char* franceCityChoice(){
-    int cityChoice;
-    fastSquire();
-    gotoxy(30,5);
-    printf("1-marcial\n");
-    gotoxy(30,6);
-    printf("2-paris\n");
-    gotoxy(30,7);
-    printf("3-tollosse\n");
-    gotoxy(45,8);
-    scanf("%d", &cityChoice);
-    switch(cityChoice){
+    int position = 1;
+    int key = 0;
+    while(key!=13){
+        system("cls");
+        fastSquire();
+        gotoxy(30,5);
+        arrowHere(1, position);printf(" marcial");
+        gotoxy(30, 6);
+        arrowHere(2, position);printf(" paris");
+        gotoxy(30, 7);
+        arrowHere(3, position);printf(" tollosse");
+        key = getch();
+        if(key == 80 && position!=3){
+            position++;
+        }else if(key == 72 && position!=1){
+            position--;
+        }else{
+            position = position;
+        }
+    }
+    switch(position){
         case 1:
             return "marcial";
             break;
@@ -760,17 +815,27 @@ char* franceCityChoice(){
 }
 
 char* spainCityChoice(){
-    int cityChoice;
-    fastSquire();
-    gotoxy(30,5);
-    printf("1-madrid\n");
-    gotoxy(30,6);
-    printf("2-barcallona\n");
-    gotoxy(30,7);
-    printf("3-sevilla\n");
-    gotoxy(45,8);
-    scanf("%d", &cityChoice);
-    switch(cityChoice){
+    int position = 1;
+    int key = 0;
+    while(key!=13){
+        system("cls");
+        fastSquire();
+        gotoxy(30,5);
+        arrowHere(1, position);printf(" madrid");
+        gotoxy(30, 6);
+        arrowHere(2, position);printf(" barcallona");
+        gotoxy(30, 7);
+        arrowHere(3, position);printf(" sevilla");
+        key = getch();
+        if(key == 80 && position!=3){
+            position++;
+        }else if(key == 72 && position!=1){
+            position--;
+        }else{
+            position = position;
+        }
+    }
+    switch(position){
         case 1:
             return "madrid";
             break;
@@ -785,17 +850,27 @@ char* spainCityChoice(){
 }
 
 char* italyCityChoice(){
-    int cityChoice;
-    fastSquire();
-    gotoxy(30,5);
-    printf("1-mellano\n");
-    gotoxy(30,6);
-    printf("2-nappoli\n");
-    gotoxy(30,7);
-    printf("3-torino\n");
-    gotoxy(45,8);
-    scanf("%d", &cityChoice);
-    switch(cityChoice){
+    int position = 1;
+    int key = 0;
+    while(key!=13){
+        system("cls");
+        fastSquire();
+        gotoxy(30,5);
+        arrowHere(1, position);printf(" mellano");
+        gotoxy(30, 6);
+        arrowHere(2, position);printf(" nappoli");
+        gotoxy(30, 7);
+        arrowHere(3, position);printf(" torino");
+        key = getch();
+        if(key == 80 && position!=3){
+            position++;
+        }else if(key == 72 && position!=1){
+            position--;
+        }else{
+            position = position;
+        }
+    }
+    switch(position){
         case 1:
             return "mellano";
             break;
@@ -867,11 +942,17 @@ Order createOrder(char* country, char* cartCNI){
 int getHowManyPerson(){
     int n;
     do{
-        system("cls");
-        fastSquire();
-        gotoxy(30,5);
-        printf("Persons: ");
-        scanf("%d", &n);
+        int result;
+        do{
+            system("cls");
+            fastSquire();
+            gotoxy(30,5);
+            printf("Persons: ");
+            result = scanf("%d", &n);
+            if(result!=1){
+                while (getchar() != '\n');
+            }
+        }while(result!=1);
     }while(n<1);
     return n;
 }
@@ -908,10 +989,17 @@ void editUserOrder(char* userFileWithExt){
     }
     system("cls");
     do{
-        showOrders(userFileWithExt);
-        printf("0 to go back\n");
-        printf("Order id: ");
-        scanf("%d", &id);
+        int result;
+        do{
+            system("cls");
+            showOrders(userFileWithExt);
+            printf("0 to go back\n");
+            printf("Order id: ");
+            result = scanf("%d", &id);
+            if(result!=1){
+                while (getchar() != '\n');
+            }
+        }while(result!=1);
         if(id==0){
             return;
         }
@@ -1093,11 +1181,17 @@ void deleteUserOrder(char* userFileWithExt){
         return;
     }
     do{
-        system("cls");
-        showOrders(userFileWithExt);
-        printf("0 to go back\n");
-        printf("Order id: ");
-        scanf("%d", &id);
+        int result;
+        do{
+            system("cls");
+            showOrders(userFileWithExt);
+            printf("0 to go back\n");
+            printf("Order id: ");
+            result = scanf("%d", &id);
+            if(result!=1){
+                while (getchar() != '\n');
+            }
+        }while(result!=1);
         if(id==0){
             return;
         }
@@ -1311,46 +1405,71 @@ Date setUserDate(){
     finishedDate.tm_hour = finishedDate.tm_min = finishedDate.tm_sec = 0;
     finishedDate.tm_isdst = -1;
     int monthChoice;
+    int result;
     do{
-        system("cls");
-        showMonth(currentTime->tm_year, currentTime->tm_mon);
-        gotoxy(50, 4);
-        printf("start Month: ");
-        scanf("%d", &monthChoice);
+        do{
+            system("cls");
+            showMonth(currentTime->tm_year, currentTime->tm_mon);
+            gotoxy(50, 4);
+            printf("start Month: ");
+            result = scanf("%d", &monthChoice);
+            if(result!=1){
+                while (getchar() != '\n');
+            }
+
+        }while(result!=1);
         startedDate.tm_mon = monthChoice-1;
     }while(startedDate.tm_mon<currentTime->tm_mon || startedDate.tm_mon>11);
 
     do{
-        system("cls");
-        if(currentTime->tm_mon==startedDate.tm_mon){
-            showDays(startedDate.tm_mon+1, currentTime->tm_mday-1);
-        }else{
-            showDays(startedDate.tm_mon, 0);
-        }
-        gotoxy(50,8);
-        printf("start day: ");
-        scanf("%d", &startedDate.tm_mday);
+        do{
+            system("cls");
+            if(currentTime->tm_mon==startedDate.tm_mon){
+                showDays(startedDate.tm_mon+1, currentTime->tm_mday-1);
+            }else{
+                showDays(startedDate.tm_mon, 0);
+            }
+            gotoxy(50,8);
+            printf("start day: ");
+            result = scanf("%d", &startedDate.tm_mday);
+            if(result!=1){
+                while (getchar() != '\n');
+            }
+
+        }while(result!=1);
     }while(currentTime->tm_mon==startedDate.tm_mon && startedDate.tm_mday<currentTime->tm_mday || startedDate.tm_mday>30);
 
     do{
-        system("cls");
-        showMonth(currentTime->tm_year, startedDate.tm_mon);
-        gotoxy(50, 4);
-        printf("end Month: ");
-        scanf("%d", &monthChoice);
+        do{
+            system("cls");
+            showMonth(currentTime->tm_year, startedDate.tm_mon);
+            gotoxy(50, 4);
+            printf("end Month: ");
+            result = scanf("%d", &monthChoice);;
+            if(result!=1){
+                while (getchar() != '\n');
+            }
+
+        }while(result!=1);
         finishedDate.tm_mon = monthChoice-1;
     }while(finishedDate.tm_mon<startedDate.tm_mon || finishedDate.tm_mon>11);
 
     do{
-        system("cls");
-        if(startedDate.tm_mon==finishedDate.tm_mon){
-            showDays(startedDate.tm_mon+1, startedDate.tm_mday);
-        }else{
-            showDays(finishedDate, 0);
-        }
-        gotoxy(50,8);
-        printf("end day: ");
-        scanf("%d", &finishedDate.tm_mday);
+        do{
+            system("cls");
+            if(startedDate.tm_mon==finishedDate.tm_mon){
+                showDays(startedDate.tm_mon+1, startedDate.tm_mday);
+            }else{
+                showDays(finishedDate, 0);
+            }
+            gotoxy(50,8);
+            printf("end day: ");
+            result = scanf("%d", &finishedDate.tm_mday);
+            if(result!=1){
+                while (getchar() != '\n');
+            }
+
+        }while(result!=1);
     }while(startedDate.tm_mon==finishedDate.tm_mon && finishedDate.tm_mday<=startedDate.tm_mday || finishedDate.tm_mday>31);
 
     time_t t1 = mktime(&finishedDate);
