@@ -1442,7 +1442,12 @@ Date setUserDate(){
     do{
         do{
             system("cls");
-            showMonth(currentTime->tm_year, startedDate.tm_mon);
+            if(startedDate.tm_mday==30 && finishedDate.tm_mon==startedDate.tm_mon){
+                showMonth(currentTime->tm_year, startedDate.tm_mon+1);
+            }else{
+                showMonth(currentTime->tm_year, startedDate.tm_mon);
+            }
+
             gotoxy(50, 4);
             printf("end Month: ");
             result = scanf("%d", &monthChoice);;
@@ -1452,7 +1457,7 @@ Date setUserDate(){
 
         }while(result!=1);
         finishedDate.tm_mon = monthChoice-1;
-    }while(finishedDate.tm_mon<startedDate.tm_mon || finishedDate.tm_mon>11);
+    }while(finishedDate.tm_mon<startedDate.tm_mon || finishedDate.tm_mon>11 || (startedDate.tm_mday==30 && finishedDate.tm_mon==startedDate.tm_mon));
 
     do{
         do{
