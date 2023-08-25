@@ -114,7 +114,7 @@ void arrowHere(int realPosition, int arrowPosition);
 
 Date setUserDate();
 
-void manageUser();
+int manageUser();
 
 int manageUserMenu();
 
@@ -122,6 +122,9 @@ void changeUserInfo(int choice, int userLine);
 
 int getUserIdLine();
 
+int deleteUserAccount();
+int confirmDeleteAccountMenu();
+void deleteAccount(int userLine);
 int main()
 {
     checkFoldersOfApp();
@@ -595,6 +598,7 @@ void userHaveOrder(char* cartCNI){
         welcomeApp(cartCNI);
     }else{
         int n;
+        int isDeleted = 0;
         fclose(userFile);
         do{
             n = userMainMenu();
@@ -618,10 +622,10 @@ void userHaveOrder(char* cartCNI){
                     manageOrders(userFileWithExt);
                     break;
                 case 4:
-                    manageUser();
+                    isDeleted = manageUser();
                     break;
             }
-        }while(n!=5);
+        }while(n!=5 && !isDeleted);
     }
 }
 
@@ -1404,8 +1408,32 @@ int confirmAddOrderMenu(){
         system("cls");
 
         fastSquire();
-        gotoxy(30,5);
+        gotoxy(30,12);
         printf("add more Orders");
+        gotoxy(42,13);
+        arrowHere(1, position);printf(" Yes\n");
+        gotoxy(42,14);
+        arrowHere(2, position);printf(" No\n");
+        key = getch();
+        if(key == 80 && position!=2){
+            position++;
+        }else if(key == 72 && position!=1){
+            position--;
+        }else{
+            position = position;
+        }
+    }
+    return position;
+}
+int confirmDeleteAccountMenu(){
+    int position = 1;
+    int key = 0;
+    while(key!=13){
+        system("cls");
+
+        fastSquire();
+        gotoxy(30,12);
+        printf("Are You Sure You Want To Delete Your Account");
         gotoxy(42,13);
         arrowHere(1, position);printf(" Yes\n");
         gotoxy(42,14);
@@ -1596,9 +1624,10 @@ void showDays(int month,int start){
     SetConsoleTextAttribute(hConsole, 7);
 }
 
-void manageUser(){
+int manageUser(){
     int choice;
     int line;
+    int isDeleted;
     line = getUserIdLine();
     do{
     choice = manageUserMenu();
@@ -1612,8 +1641,11 @@ void manageUser(){
         case 3:
             changeUserInfo(3, line);
             break;
+        case 4:
+            isDeleted = deleteUserAccount(line);
     }
-    }while(choice!=4);
+    }while(choice!=5 && !isDeleted);
+    return isDeleted;
 }
 
 int manageUserMenu(){
@@ -1637,9 +1669,11 @@ int manageUserMenu(){
         gotoxy(30, 14);
         arrowHere(3, position);printf(" change PhoneNumber");
         gotoxy(30, 15);
-        arrowHere(4, position);printf(" Back");
+        arrowHere(4, position);printf(" delete Account");
+        gotoxy(30, 16);
+        arrowHere(5, position);printf(" Back");
         key = getch();
-        if(key == 80 && position!=4){
+        if(key == 80 && position!=5){
             position++;
         }else if(key == 72 && position!=1){
             position--;
@@ -1763,4 +1797,29 @@ void changeUserInfo(int choice, int userLine){
     fclose(tempFile);
     remove("users.txt");
     rename("tempUser.txt", "users.txt");
+}
+void deleteAccount(int userLine){
+    int i = 0;
+    FILE* userFile = fopen("users.txt", "r");
+    FILE* tempFile = fopen("tempUser.txt", "w");
+    char line[200];
+    while(fgets(line, sizeof(line), userFile)){
+        if(userLine!=i){
+            fprintf(tempFile,"%s", line);
+        }
+        i++;
+    }
+    fclose(userFile);
+    fclose(tempFile);
+    remove("users.txt");
+    rename("tempUser.txt", "users.txt");
+}
+
+int deleteUserAccount(int userLine){
+    int choice = confirmDeleteAccountMenu();
+    if(choice==1){
+        deleteAccount(userLine);
+        return 1;
+    }
+    return 0;
 }
