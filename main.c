@@ -181,35 +181,54 @@ void Register(){
     char lastName[50];
 
     fastSquire();
-    gotoxy(25, 4);
+    gotoxy(25, 5);
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, 1);
-    printf("---Register---");
-    gotoxy(30,5);
+    SetConsoleTextAttribute(hConsole, 2);
+    printf("+------Register-------------------+");
+    gotoxy(25,6);
+    printf("|                                 |");
+    gotoxy(25,7);
+    printf("|   ");
     SetConsoleTextAttribute(hConsole, 3);
     printf("Cart CNI: ");
+    SetConsoleTextAttribute(hConsole, 2);
+    printf("                    |");
+    gotoxy(25,8);
+    printf("|   ");
+    SetConsoleTextAttribute(hConsole, 3);
+    printf("FirstName: ");
+    SetConsoleTextAttribute(hConsole, 2);
+    printf("                   |");
+    gotoxy(25,9);
+    printf("|   ");
+    SetConsoleTextAttribute(hConsole, 3);
+    printf("LastName: ");
+    SetConsoleTextAttribute(hConsole, 2);
+    printf("                    |");
+    gotoxy(25,10);
+    printf("|   ");
+    SetConsoleTextAttribute(hConsole, 3);
+    printf("PhoneNumber: ");
+    SetConsoleTextAttribute(hConsole, 2);
+    printf("                 |");
+    gotoxy(25,11);
+    printf("|                                 |");
+    gotoxy(25,12);
+    printf("+---------------------------------+");
     SetConsoleTextAttribute(hConsole, 7);
+    gotoxy(42,7);
     scanf("%s", cartCNI);
-    gotoxy(30,6);
-    SetConsoleTextAttribute(hConsole, 3);
-    printf("firstName: ");
-    SetConsoleTextAttribute(hConsole, 7);
+    gotoxy(42,8);
     scanf("%s", firstName);
-    gotoxy(30,7);
-    SetConsoleTextAttribute(hConsole, 3);
-    printf("lastName: ");
-    SetConsoleTextAttribute(hConsole, 7);
+    gotoxy(42,9);
     scanf("%s", lastName);
-    gotoxy(30,8);
-    SetConsoleTextAttribute(hConsole, 3);
-    printf("Phone Number: ");
-    SetConsoleTextAttribute(hConsole, 7);
+    gotoxy(42,10);
     scanf("%s", phoneNumber);
     FILE* usersFile = fopen("users.txt", "a");
     char *data;
     char line[200];
     if(checkUserExists(cartCNI)){
-        gotoxy(35,10);
+        gotoxy(35,14);
         SetConsoleTextAttribute(hConsole, 4);
         printf("error, this User Already Regestered\n");
         getch();
@@ -218,17 +237,17 @@ void Register(){
     }
     //check cartNational
     if(isdigit(cartCNI[0])){
-        gotoxy(35,10);
+        gotoxy(35,14);
         SetConsoleTextAttribute(hConsole, 4);
         printf("error, this cartCNI is not valid");
-        gotoxy(35,11);
+        gotoxy(35,15);
         printf("(cartCNI doesn't start with a number)");
         getch();
         return;
     }
     for(int i=0;firstName[i]!='\0';i++){
         if(isdigit(firstName[i])){
-            gotoxy(35,10);
+            gotoxy(35,14);
             SetConsoleTextAttribute(hConsole, 4);
             printf("error, there is a number in your firstName");
             getch();
@@ -237,7 +256,7 @@ void Register(){
     }
     for(int i=0;lastName[i]!='\0';i++){
         if(isdigit(lastName[i])){
-            gotoxy(35,10);
+            gotoxy(35,14);
             SetConsoleTextAttribute(hConsole, 4);
             printf("error, there is a number in your lastName");
             getch();
@@ -247,7 +266,7 @@ void Register(){
     //check user phone Number is Valid:
     for(int i=0;phoneNumber[i]!='\0';i++){
         if (!isdigit(phoneNumber[i])) {
-            gotoxy(35,10);
+            gotoxy(35,14);
             SetConsoleTextAttribute(hConsole, 4);
             printf("error, phone number can't be a char");
             getch();
@@ -255,7 +274,7 @@ void Register(){
         }
     }
     if(strlen(phoneNumber)!=10){
-        gotoxy(35,10);
+        gotoxy(35,14);
         SetConsoleTextAttribute(hConsole, 4);
         printf("error, phone number have to be 10 Numbers");
         getch();
@@ -265,7 +284,7 @@ void Register(){
     fclose(usersFile);
     system("cls");
     fastSquire();
-    gotoxy(35,10);
+    gotoxy(35,14);
     SetConsoleTextAttribute(hConsole, 2);
     printf("User Regestered Sussecful\n");
     getch();
