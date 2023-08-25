@@ -579,10 +579,10 @@ void showUserOrder(Order order, int id){
     printf("| Country: %-14s|\n", order.country);
     printf("| City: %-17s|\n", order.city);
     printf("| Hotel: %-16s|\n", order.hotel.hotelName);
-    printf("| Days:%-2d %-2d/%-2d to %-2d/%-2d |\n", order.date.days, order.date.firstDay,order.date.firstMonth, order.date.lastDay, order.date.lastMonth);
+    printf("| Days:%-2d %-2d/%-2d to %-2d/%-2d |\n", order.date.days, order.date.firstMonth,order.date.firstDay, order.date.lastMonth, order.date.lastDay);
     printf("| Person: %-15d|\n", order.persons);
     int days = order.date.lastDay-order.date.firstDay;
-    printf("| price: %-4d$           |\n", order.hotel.price);
+    printf("| price: %-6d$         |\n", order.hotel.price);
     printf("+------------------------+\n");
 }
 
@@ -1627,7 +1627,7 @@ void showDays(int month,int start){
 int manageUser(){
     int choice;
     int line;
-    int isDeleted;
+    int isDeleted = 0;
     line = getUserIdLine();
     do{
     choice = manageUserMenu();
@@ -1643,6 +1643,7 @@ int manageUser(){
             break;
         case 4:
             isDeleted = deleteUserAccount(line);
+            break;
     }
     }while(choice!=5 && !isDeleted);
     return isDeleted;
