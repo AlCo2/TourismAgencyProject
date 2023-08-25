@@ -5,7 +5,7 @@
 #include <time.h>
 #include <string.h>
 
-#define ANIME_TIME 1
+#define ANIME_TIME 0
 
 COORD coord = {0,0};
 
@@ -34,6 +34,14 @@ typedef struct Order{
     int persons;
     Date date;
 }Order;
+
+typedef struct User{
+    char cartCNI[30];
+    char firstName[50];
+    char lastName[50];
+    char phoneNumber[20];
+}User;
+User user;
 
 int mainMenu();
 
@@ -106,6 +114,14 @@ void arrowHere(int realPosition, int arrowPosition);
 
 Date setUserDate();
 
+void manageUser();
+
+int manageUserMenu();
+
+void changeUserInfo(int choice, int userLine);
+
+int getUserIdLine();
+
 int main()
 {
     checkFoldersOfApp();
@@ -127,20 +143,30 @@ void login(){
     system("cls");
     char cartCNI[30];
     fastSquire();
-    gotoxy(25, 4);
+    gotoxy(25, 7);
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, 2);
-    printf("---Login---");
-    gotoxy(30,5);
+    printf("+-----Login--------------------+");
+    gotoxy(25,8);
+    printf("|                              |");
+    gotoxy(25,10);
+    printf("|                              |");
+    gotoxy(25,11);
+    printf("+------------------------------+");
+    gotoxy(25,9);
+    SetConsoleTextAttribute(hConsole, 2);
+    printf("|");
+    SetConsoleTextAttribute(hConsole, 3);
+    printf("  Cart CNI:                   ");
+    SetConsoleTextAttribute(hConsole, 2);
+    printf("|");
     SetConsoleTextAttribute(hConsole, 7);
-    printf("Cart CNI: ");
+    gotoxy(38, 9);
     scanf("%s", cartCNI);
     if(!checkUserExists(cartCNI)){
-        gotoxy(31,6);
+        gotoxy(27,10);
         SetConsoleTextAttribute(hConsole, 4);
         printf("error, user is not regesterd\n");
-        gotoxy(34, 7);
-        printf("please Register");
         getch();
         return;
     }
@@ -256,6 +282,13 @@ int checkUserExists(char* cartCNI){
         data = strtok(line, " ");
         while(data!=NULL){
             if(strcmp(data, cartCNI)==0){
+                strcpy(user.cartCNI, cartCNI);
+                data = strtok(NULL, " ");
+                strcpy(user.firstName, data);
+                data = strtok(NULL, " ");
+                strcpy(user.lastName, data);
+                data = strtok(NULL, " ");
+                strcpy(user.phoneNumber, data);
                 fclose(file);
                 return 1;
             }
@@ -565,8 +598,11 @@ void userHaveOrder(char* cartCNI){
                 case 3:
                     manageOrders(userFileWithExt);
                     break;
+                case 4:
+                    manageUser();
+                    break;
             }
-        }while(n!=4);
+        }while(n!=5);
     }
 }
 
@@ -723,10 +759,14 @@ void fastSquire(){
         gotoxy(80,i);
         printf("|");
     }
-    gotoxy(43,2);
+    gotoxy(41,2);
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, 1);
-    printf("Tourisme Agency");
+    SetConsoleTextAttribute(hConsole, 3);
+    printf("+-----------------+");
+    gotoxy(41,3);
+    printf("| Tourisme Agency |");
+    gotoxy(41,4);
+    printf("+-----------------+");
     SetConsoleTextAttribute(hConsole, 7);
 }
 
@@ -1269,16 +1309,18 @@ int userMainMenu(){
     while(key!=13){
         system("cls");
         fastSquire();
-        gotoxy(30,5);
+        gotoxy(30,10);
         arrowHere(1, position);printf(" add Order");
-        gotoxy(30, 6);
+        gotoxy(30, 11);
         arrowHere(2, position);printf(" show Orders");
-        gotoxy(30, 7);
+        gotoxy(30, 12);
         arrowHere(3, position);printf(" manage Orders");
-        gotoxy(30, 8);
-        arrowHere(4, position);printf(" Logout");
+        gotoxy(30, 13);
+        arrowHere(4, position);printf(" user Info");
+        gotoxy(30, 14);
+        arrowHere(5, position);printf(" Logout");
         key = getch();
-        if(key == 80 && position!=4){
+        if(key == 80 && position!=5){
             position++;
         }else if(key == 72 && position!=1){
             position--;
@@ -1533,4 +1575,173 @@ void showDays(int month,int start){
         x+=4;
     }
     SetConsoleTextAttribute(hConsole, 7);
+}
+
+void manageUser(){
+    int choice;
+    int line;
+    line = getUserIdLine();
+    do{
+    choice = manageUserMenu();
+    switch(choice){
+        case 1:
+            changeUserInfo(1, line);
+            break;
+        case 2:
+            changeUserInfo(2, line);
+            break;
+        case 3:
+            changeUserInfo(3, line);
+            break;
+    }
+    }while(choice!=4);
+}
+
+int manageUserMenu(){
+    int position = 1;
+    int key = 0;
+    while(key!=13){
+        system("cls");
+        fastSquire();
+        gotoxy(25, 6);
+        printf("CartCNI: %s", user.cartCNI);
+        gotoxy(25, 7);
+        printf("FirstName: %s", user.firstName);
+        gotoxy(25, 8);
+        printf("LastName: %s", user.lastName);
+        gotoxy(25, 9);
+        printf("PhoneNumber: %s", user.phoneNumber);
+        gotoxy(30,12);
+        arrowHere(1, position);printf(" change FirstName");
+        gotoxy(30, 13);
+        arrowHere(2, position);printf(" change LastName");
+        gotoxy(30, 14);
+        arrowHere(3, position);printf(" change PhoneNumber");
+        gotoxy(30, 15);
+        arrowHere(4, position);printf(" Back");
+        key = getch();
+        if(key == 80 && position!=4){
+            position++;
+        }else if(key == 72 && position!=1){
+            position--;
+        }else{
+            position = position;
+        }
+    }
+    return position;
+}
+
+int getUserIdLine(){
+    FILE* file = fopen("users.txt", "r");
+    if(file==NULL){
+        return;
+    }
+    char *data;
+    char line[200];
+    int i = 0;
+    while(fgets(line, sizeof(line), file)){
+        data = strtok(line, " ");
+        while(data!=NULL){
+            if(strcmp(data, user.cartCNI)==0){
+                fclose(file);
+                return i;
+            }
+            data = strtok(NULL, " ");
+            break;
+        }
+        i++;
+    }
+    fclose(file);
+}
+
+void changeUserInfo(int choice, int userLine){
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    char temp[50];
+    switch(choice){
+        case 1:
+            system("cls");
+            printf("New FirstName: ");
+            scanf("%s", temp);
+            break;
+        case 2:
+            system("cls");
+            printf("New LastName: ");
+            scanf("%s", temp);
+            break;
+        case 3:
+            system("cls");
+            printf("New phoneNumber: ");
+            scanf("%s", temp);
+            break;
+    }
+    if(choice==1){
+        for(int i=0;temp[i]!='\0';i++){
+            if(isdigit(temp[i])){
+                gotoxy(35,10);
+                SetConsoleTextAttribute(hConsole, 4);
+                printf("error, there is a number in your firstName");
+                getch();
+                return;
+            }
+        }
+    }
+    if(choice==2){
+         for(int i=0;temp[i]!='\0';i++){
+            if(isdigit(temp[i])){
+                gotoxy(35,10);
+                SetConsoleTextAttribute(hConsole, 4);
+                printf("error, there is a number in your lastName");
+                getch();
+                return;
+            }
+        }
+    }
+    if(choice==3){
+        //check user phone Number is Valid:
+        for(int i=0;temp[i]!='\0';i++){
+            if (!isdigit(temp[i])) {
+                gotoxy(35,10);
+                SetConsoleTextAttribute(hConsole, 4);
+                printf("error, phone number can't be a char");
+                getch();
+                return;
+            }
+        }
+        if(strlen(temp)!=10){
+            gotoxy(35,10);
+            SetConsoleTextAttribute(hConsole, 4);
+            printf("error, phone number have to be 10 Numbers");
+            getch();
+            return;
+        }
+    }
+    int i = 0;
+    FILE* userFile = fopen("users.txt", "r");
+    FILE* tempFile = fopen("tempUser.txt", "w");
+    char line[200];
+    while(fgets(line, sizeof(line), userFile)){
+        if(userLine==i){
+            switch(choice){
+                case 1:
+                    fprintf(tempFile, "%s %s %s %s", user.cartCNI, temp, user.lastName, user.phoneNumber);
+                    strcpy(user.firstName, temp);
+                    break;
+                case 2:
+                    fprintf(tempFile, "%s %s %s %s", user.cartCNI, user.firstName, temp, user.phoneNumber);
+                    strcpy(user.lastName, temp);
+                    break;
+                case 3:
+                    fprintf(tempFile, "%s %s %s %s", user.cartCNI, user.firstName, user.lastName, temp);
+                    strcpy(user.phoneNumber, temp);
+                    break;
+            }
+        }else{
+            fprintf(tempFile,"%s", line);
+        }
+        i++;
+    }
+    fclose(userFile);
+    fclose(tempFile);
+    remove("users.txt");
+    rename("tempUser.txt", "users.txt");
 }
