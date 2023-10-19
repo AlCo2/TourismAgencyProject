@@ -5,7 +5,7 @@
 #include <time.h>
 #include <string.h>
 
-#define ANIME_TIME 0
+#define ANIME_TIME 1
 
 COORD coord = {0,0};
 
@@ -123,8 +123,11 @@ void changeUserInfo(int choice, int userLine);
 int getUserIdLine();
 
 int deleteUserAccount();
+
 int confirmDeleteAccountMenu();
+
 void deleteAccount(int userLine);
+
 int main()
 {
     checkFoldersOfApp();
@@ -1298,7 +1301,6 @@ void arrowHere(int realPosition, int arrowPosition){
         printf("     ");
     }
 }
-
 int mainMenu(){
     int position = 1;
     int key = 0;
@@ -1824,3 +1826,4 @@ int deleteUserAccount(int userLine){
     }
     return 0;
 }
+
